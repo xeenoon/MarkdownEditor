@@ -28,10 +28,6 @@ namespace MarkdownEditor
 
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            if (webBrowser1.Url.AbsolutePath != "blank")
-            {
-                textBox1_TextChanged(null,null);
-            }
             webBrowser1.Document.Window.ScrollTo(0, webBrowser1.Document.Body.ScrollRectangle.Height);
         }
 

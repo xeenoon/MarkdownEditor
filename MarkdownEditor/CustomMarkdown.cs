@@ -26,8 +26,8 @@ namespace MarkdownEditor
             result = result.RemoveAsterixs();
             result = result.RemoveHeadings();
             result = result.RemoveCode();
-            result = result.RemoveImages();
             result = result.RemoveLinks();
+            result = result.RemoveImages();
             return result;
         }
     }
@@ -305,7 +305,23 @@ namespace MarkdownEditor
         {
             if (text.Contains("https://"))
             {
-                int startidx = text.IndexOf("https://");
+                int startidx = 0;
+                retrypoint:
+                startidx = text.IndexOf("https://", startidx);
+                if (startidx != 0 && (text[startidx-1] == '(' || text[startidx - 1] == '\"' || (startidx >= 2 && text[startidx - 2] == '\"')))
+                {
+                    int ProcessedLinks = Regex.Matches(text, "\\(https://").Count + Regex.Matches(text, "\"https://").Count + Regex.Matches(text, "\">https://").Count;
+                    int AllLinks = Regex.Matches(text, "https://").Count;
+                    if (AllLinks - ProcessedLinks >= 1) //Is there actually a real link?
+                    {
+                        startidx = text.IndexOf("https://", startidx + 1);
+                        goto retrypoint;
+                    }
+                    else
+                    {
+                        return text;
+                    }
+                }
                 int endidx;
                 int[] positions = new int[3] { text.IndexOf("\n", startidx), text.IndexOf(" ", startidx), text.IndexOf("<br>", startidx) };
                 for (int i = 0; i < positions.Length; i++)
@@ -321,7 +337,7 @@ namespace MarkdownEditor
                 string html = string.Format("<a href=\"{0}\">{0}</a>", link);
                 string before = text.Substring(0,startidx);
                 string after = text.Substring(endidx);
-                return before + html + after;
+                return RemoveLinks(before + html + after);
             }
             return text;
         }
