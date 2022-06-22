@@ -25,6 +25,7 @@ namespace MarkdownEditor
             result = result.ReplaceLists();
             result = result.RemoveAsterixs();
             result = result.RemoveHeadings();
+            result = result.RemoveCode();
             return result;
         }
     }
@@ -48,7 +49,7 @@ namespace MarkdownEditor
 
             //Start at 2 to avoid an error
             //Finish one before the end to stop overflow
-            for (int i = 2; i < processString.Length-1; i++)
+            for (int i = 2; i < processString.Length - 1; i++)
             {
                 char c = processString[i];
 
@@ -56,7 +57,7 @@ namespace MarkdownEditor
                 if (lastthree.Contains("***")) //All asterixes, bold and italics
                 {
                     string before = processString.Substring(0, i - 2); //Find everything before the asterixes
-                    string after = processString.Substring(i+1); //Get the stuff that comes afterwards
+                    string after = processString.Substring(i + 1); //Get the stuff that comes afterwards
                     if (after.Contains("***")) //Will there be a closing set?
                     {
                         return RemoveAsterixs((before + "<b><i>" + after).ReplaceTrailingAsterixs("***", "</b></i>"));
@@ -68,7 +69,7 @@ namespace MarkdownEditor
                 //Next character CANNOT be a *, if it is then the top event should be fired next time around
                 {
                     string before = processString.Substring(0, i - 1); //Find everything before the two asterixes
-                    string after = processString.Substring(i+1); //Get the stuff that comes afterwards
+                    string after = processString.Substring(i + 1); //Get the stuff that comes afterwards
                     if (after.Contains("**")) //Will there be a closing set?
                     {
                         return RemoveAsterixs((before + "<b>" + after).ReplaceTrailingAsterixs("**", "</b>"));
@@ -79,7 +80,7 @@ namespace MarkdownEditor
                 //Is it just this one that is an asterix?
                 {
                     string before = processString.Substring(0, i); //Find everything before the asterix
-                    string after = processString.Substring(i+1); //Get the stuff that comes afterwards
+                    string after = processString.Substring(i + 1); //Get the stuff that comes afterwards
                     if (after.Contains("*")) //Will there be a closing set?
                     {
                         return RemoveAsterixs((before + "<i>" + after).ReplaceTrailingAsterixs("*", "</i>"));
@@ -103,7 +104,7 @@ namespace MarkdownEditor
             {
                 int startidx = text.IndexOf("# ");
 
-                string before = text.Substring(0, startidx+1);
+                string before = text.Substring(0, startidx + 1);
                 int hashes = before.TrailingHashes();
 
                 string removeHashes = before.Substring(0, before.Length - hashes);
@@ -137,9 +138,9 @@ namespace MarkdownEditor
         {
             for (int i = 1; i < text.Length; i++)
             {
-                if (text[text.Length-i] != '#')
+                if (text[text.Length - i] != '#')
                 {
-                    return i-1;
+                    return i - 1;
                 }
             }
             return text.Length;
@@ -151,8 +152,8 @@ namespace MarkdownEditor
             if (text.Contains("> ")) //Does it have blockquotes?
             {
                 int startidx = text.IndexOf("> ");
-                string before = text.Substring(0,startidx);
-                string after = text.Substring(startidx+2);
+                string before = text.Substring(0, startidx);
+                string after = text.Substring(startidx + 2);
 
                 if (before == "" || before.EndsWith("<br>") || before.EndsWith("\n")) //Is this a new line? Or is it the first line
                 {
@@ -186,16 +187,16 @@ namespace MarkdownEditor
             return text; //Just return the input
         }
         #endregion
-        #region NumberedList
+        #region List
         public static string ReplaceLists(this string text)
         {
             if (text.Contains("1. ")) //Contains a numbered list?
             {
                 int startidx = text.IndexOf("1. ");
                 int endoflist = EndOfList(text);
-                string before = text.Substring(0,startidx);
+                string before = text.Substring(0, startidx);
                 string after = text.Substring(endoflist);
-                string list = text.Substring(startidx, endoflist-startidx).RemoveNumberedListItems();
+                string list = text.Substring(startidx, endoflist - startidx).RemoveNumberedListItems();
                 list = before + "<ol style=\"margin: 0 0 0 0;padding: 5 0 0 40\">" + list + "</ol>" + after;
                 return ReplaceLists(list);
             }
@@ -204,10 +205,10 @@ namespace MarkdownEditor
         public static int EndOfList(string text)
         {
             int lastidx = text.Length;
-            for (int i = 0; i < text.Length-2; i++) 
+            for (int i = 0; i < text.Length - 2; i++)
             {
                 char c = text[i];
-                if (char.IsNumber(c) && text[i+1] == '.' && text[i+2] == ' ') //Is it a list item?
+                if (char.IsNumber(c) && text[i + 1] == '.' && text[i + 2] == ' ') //Is it a list item?
                 {
                     lastidx = i;
                 }
@@ -233,18 +234,46 @@ namespace MarkdownEditor
                 char c = text[i];
                 if (char.IsNumber(c) && text[i + 1] == '.' && text[i + 2] == ' ') //Is it a list item?
                 {
-                    string before = text.Substring(0,i).Trim(new char[10] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}); //Remove trailing numbers
-                    int end = text.IndexOf("\n",i); //Find the end of the line
+                    string before = text.Substring(0, i).Trim(new char[10] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }); //Remove trailing numbers
+                    int end = text.IndexOf("\n", i); //Find the end of the line
                     if (end == -1) //End of text?
                     {
                         end = text.Length;
                     }
                     string after = text.Substring(end);
-                    string replace = "<li>" + text.Substring(i + 2, end-i-2) + "</li>";
+                    string replace = "<li>" + text.Substring(i + 2, end - i - 2) + "</li>";
                     return RemoveNumberedListItems(before + replace + after);
                 }
             }
             return text;
+        }
+        #endregion
+        #region CodeBlock
+        public static string RemoveCode(this string processString)
+        {
+            processString = "  " + processString; //Add two on the start of it, to allow iterations with 'lastthree'
+
+            //Start at 2 to avoid an error
+            //Finish one before the end to stop overflow
+            for (int i = 2; i < processString.Length - 1; i++)
+            {
+                char c = processString[i];
+
+                string lastthree = processString.Substring(i - 2, 3);
+                if (lastthree.Contains("```")) //Is it code?
+                {
+                    string before = processString.Substring(0, i - 2); //Find everything before the tildas
+                    string after = processString.Substring(i + 1); //Get the stuff that comes afterwards
+                    if (after.Contains("```")) //Will there be a closing set?
+                    {
+                        return RemoveCode((before + "<code style=\"color: #000000; background-color: #E3E6E8; border-radius: 50; font-family: SFMono-Regular,Menlo,Monaco,Consolas,\"Liberation Mono\",\"Courier New\",monospace\"; word-wrap: break-word;\">" + after).ReplaceTrailingAsterixs("```", "</code>"));
+                    }
+                    //Continue, check to see if there is a closing set for the other types
+                }
+            }
+
+            //No change?
+            return processString.Trim(); //Return the original text
         }
         #endregion
     }
