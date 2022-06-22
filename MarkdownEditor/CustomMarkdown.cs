@@ -19,7 +19,8 @@ namespace MarkdownEditor
         public string GetHtml()
         {
             string result = rawdata.RemoveAsterixs();
-            result = Regex.Replace(result, "\n", "<br>");
+            result = Regex.Replace(result, "\n\n", "<br>");
+            result = Regex.Replace(result, "\n", "");
             result = result.RemoveHeadings();
             return result;
         }
@@ -92,7 +93,6 @@ namespace MarkdownEditor
             return result;
         }
         #endregion
-
         #region Headings
         public static string RemoveHeadings(this string text)
         {
@@ -131,6 +131,24 @@ namespace MarkdownEditor
                 }
             }
             return text.Length;
+        }
+        #endregion
+        #region BlockQuote
+        public static string RemoveBlockQuotes(this string text)
+        {
+            if (text.Contains("> ")) //Does it have blockquotes?
+            {
+                int startidx = text.IndexOf("> ");
+                string before = text.Substring(0,startidx+1);
+
+                if (before == "" || before.EndsWith("<br>")) //Is this a new line? Or is it the first line
+                {
+                    //This is a valid quoteblock
+                }
+            }
+
+            //No change?
+            return text; //Just return the input
         }
         #endregion
     }
