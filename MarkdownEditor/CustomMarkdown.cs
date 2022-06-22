@@ -20,12 +20,24 @@ namespace MarkdownEditor
         {
             string result = rawdata.RemoveAsterixs();
             result = Regex.Replace(result, "\n", "<br>");
+            result = result.RemoveHeadings();
             return result;
         }
     }
 
     public static class CustomMarkdownExtensions
     {
+        public static string ReplaceFirst(this string text, string search, string replace)
+        {
+            int pos = text.IndexOf(search);
+            if (pos < 0)
+            {
+                return text;
+            }
+            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+        }
+
+        #region Asterix
         public static string RemoveAsterixs(this string processString)
         {
             processString = "  " + processString; //Add two on the start of it, to allow iterations with 'lastthree'
@@ -74,20 +86,52 @@ namespace MarkdownEditor
             //No change?
             return processString.Trim(); //Return the original text
         }
-
         public static string ReplaceTrailingAsterixs(this string processString, string lookfor, string closingTag)
         {
             var result = processString.ReplaceFirst(lookfor, closingTag); //Remove the closing set of asterixs and replace it with the leading tags
             return result;
         }
-        public static string ReplaceFirst(this string text, string search, string replace)
+        #endregion
+
+        #region Headings
+        public static string RemoveHeadings(this string text)
         {
-            int pos = text.IndexOf(search);
-            if (pos < 0)
+            if (text.Contains("# ")) //Does it have headings?
             {
-                return text;
+                int startidx = text.IndexOf("# ");
+
+                string before = text.Substring(0, startidx+1);
+                int hashes = before.TrailingHashes();
+
+                string removeHashes = before.Substring(0, before.Length - hashes);
+                if (removeHashes == "" || removeHashes.EndsWith("<br>")) //Is this a new line? Or is it the first line
+                {
+                    removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">",hashes); //Add the first tag
+                    string after = text.Substring(startidx + 2).ReplaceFirst("<br>", string.Format("</h{0}>", hashes)); //Remove the '# '
+                    if (!after.Contains("</h")) //Has the end heading tag not been added?
+                    {
+                        //This means this is the last line
+                        //Add trailing heading tag at the end instead
+                        after += string.Format("</h{0}>", hashes);
+                    }
+                    return RemoveHeadings(removeHashes + after);
+                }
             }
-            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+
+            //No change?
+            return text; //Just return the input
         }
+        public static int TrailingHashes(this string text)
+        {
+            for (int i = 1; i < text.Length; i++)
+            {
+                if (text[text.Length-i] != '#')
+                {
+                    return i-1;
+                }
+            }
+            return text.Length;
+        }
+        #endregion
     }
 }
