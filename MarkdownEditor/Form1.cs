@@ -16,12 +16,14 @@ namespace MarkdownEditor
         public Form1()
         {
             InitializeComponent();
+            var md = richTextBox1.Text;
+            CustomMarkdown customMarkdown = new CustomMarkdown(md);
+            webBrowser1.DocumentText = customMarkdown.GetHtml();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             var md = richTextBox1.Text;
-            //var html = Markdig.Markdown.ToHtml(md);
             CustomMarkdown customMarkdown = new CustomMarkdown(md);
             webBrowser1.DocumentText = customMarkdown.GetHtml();
         }

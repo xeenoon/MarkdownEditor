@@ -117,4 +117,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value># Cool cat rainbow thingy
+
+
+![Nyan cat](https://i0.wp.com/www.printmag.com/wp-content/uploads/2021/02/4cbe8d_f1ed2800a49649848102c68fc5a66e53mv2.gif?fit=476%2C280&amp;ssl=1)
+
+```Here is some code which looks like it is in a code font ```
+
+1. Item 1
+2. Item 2
+3. Item 3
+
+**Bold text**
+
+&lt;h1 style="background:gray"&gt;Actual heading&lt;/h1&gt;
+
+&lt;div id="user-greeting" style="text-align: centre;"&gt;Welcome back, user&lt;/div&gt;
+
+https://google.com</value>
+  </data>
 </root>
