@@ -18,7 +18,7 @@ namespace MarkdownEditor
 
         public string GetHtml()
         {
-            string result = "<head>" + rawdata;
+            string result = rawdata;
             result = Regex.Replace(result, "\n\n", "<br>");
 
             result = result.RemoveBlockQuotes();
@@ -27,7 +27,8 @@ namespace MarkdownEditor
             result = result.RemoveHeadings();
             result = result.RemoveCode();
             result = result.RemoveImages();
-            return result + "</head>";
+            result = result.RemoveLinks();
+            return result;
         }
     }
 
@@ -105,31 +106,30 @@ namespace MarkdownEditor
             {
                 int startidx = text.IndexOf("# ");
 
-                string before = text.Substring(0, startidx + 1);
+                string before = text.Substring(0, startidx+1);
                 int hashes = before.TrailingHashes();
 
                 string removeHashes = before.Substring(0, before.Length - hashes);
-                if (removeHashes == "" || removeHashes.EndsWith("<br>") || removeHashes.EndsWith("\n")) //Is this a new line? Or is it the first line
+
+                string after = "";
+                if (removeHashes.EndsWith("<br>"))
                 {
-                    string after = "";
-                    if (removeHashes.EndsWith("<br>"))
-                    {
-                        removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">", hashes); //Add the first tag
-                        after = text.Substring(startidx + 2).ReplaceFirst("<br>", string.Format("</h{0}>", hashes)); //Remove the '# '
-                    }
-                    else
-                    {
-                        removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">", hashes); //Add the first tag
-                        after = text.Substring(startidx + 2).ReplaceFirst("\n", string.Format("</h{0}>", hashes)); //Remove the '# '
-                    }
-                    if (!after.Contains("</h")) //Has the end heading tag not been added?
-                    {
-                        //This means this is the last line
-                        //Add trailing heading tag at the end instead
-                        after += string.Format("</h{0}>", hashes);
-                    }
-                    return RemoveHeadings(removeHashes + after);
+                    removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">", hashes); //Add the first tag
+                    after = text.Substring(startidx + 2).ReplaceFirst("<br>", string.Format("</h{0}>", hashes)); //Remove the '# '
                 }
+                else
+                {
+                    removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">", hashes); //Add the first tag
+                    after = text.Substring(startidx + 2).ReplaceFirst("\n", string.Format("</h{0}>", hashes)); //Remove the '# '
+                }
+                if (!after.Contains("</h")) //Has the end heading tag not been added?
+                {
+                    //This means this is the last line
+                    //Add trailing heading tag at the end instead
+                    after += string.Format("</h{0}>\n", hashes);
+                }
+                return RemoveHeadings(removeHashes + after);
+
             }
 
             //No change?
@@ -214,18 +214,16 @@ namespace MarkdownEditor
                     lastidx = i;
                 }
             }
-            if (text.IndexOf("\n", lastidx) == -1)
+            int[] positions = new int[2] { text.IndexOf("\n", lastidx), text.IndexOf("<br>", lastidx) };
+            for (int idx = 0; idx < positions.Length; idx++)
             {
-                lastidx = text.IndexOf("<br>", lastidx);
-                if (lastidx == -1)
+                int item = positions[idx];
+                if (item == -1)
                 {
-                    lastidx = text.Length;
+                    positions[idx] = text.Length;
                 }
-            } //Search for both "<br>" and "\n"
-            else
-            {
-                lastidx = text.IndexOf("\n", lastidx);
             }
+            lastidx = positions.OrderBy(it => it).FirstOrDefault();
             return lastidx;
         }
         public static string RemoveNumberedListItems(this string text)
@@ -236,11 +234,16 @@ namespace MarkdownEditor
                 if (char.IsNumber(c) && text[i + 1] == '.' && text[i + 2] == ' ') //Is it a list item?
                 {
                     string before = text.Substring(0, i).Trim(new char[10] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }); //Remove trailing numbers
-                    int end = text.IndexOf("\n", i); //Find the end of the line
-                    if (end == -1) //End of text?
+                    int[] positions = new int[2] { text.IndexOf("\n", i), text.IndexOf("<br>", i) };
+                    for (int idx = 0; idx < positions.Length; idx++)
                     {
-                        end = text.Length;
+                        int item = positions[idx];
+                        if (item == -1)
+                        {
+                            positions[idx] = text.Length;
+                        }
                     }
+                    var end = positions.OrderBy(it=>it).FirstOrDefault();
                     string after = text.Substring(end);
                     string replace = "<li>" + text.Substring(i + 2, end - i - 2) + "</li>";
                     return RemoveNumberedListItems(before + replace + after);
@@ -293,6 +296,32 @@ namespace MarkdownEditor
                 string before = text.Substring(0,imageidx);
                 string after = text.Substring(closingBracketIdx+1);
                 return RemoveImages(before + result + after);
+            }
+            return text;
+        }
+        #endregion
+        #region Links
+        public static string RemoveLinks(this string text)
+        {
+            if (text.Contains("https://"))
+            {
+                int startidx = text.IndexOf("https://");
+                int endidx;
+                int[] positions = new int[3] { text.IndexOf("\n", startidx), text.IndexOf(" ", startidx), text.IndexOf("<br>", startidx) };
+                for (int i = 0; i < positions.Length; i++)
+                {
+                    int item = positions[i];
+                    if (item == -1)
+                    {
+                        positions[i] = text.Length;
+                    }
+                }
+                endidx = positions.OrderBy(i=>i).FirstOrDefault();
+                string link = text.Substring(startidx, endidx-startidx);
+                string html = string.Format("<a href=\"{0}\">{0}</a>", link);
+                string before = text.Substring(0,startidx);
+                string after = text.Substring(endidx);
+                return before + html + after;
             }
             return text;
         }

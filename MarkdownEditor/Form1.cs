@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,21 @@ namespace MarkdownEditor
 
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
+            if (webBrowser1.Url.AbsolutePath != "blank")
+            {
+                textBox1_TextChanged(null,null);
+            }
             webBrowser1.Document.Window.ScrollTo(0, webBrowser1.Document.Body.ScrollRectangle.Height);
+        }
+
+        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            if (e.Url.AbsolutePath == "blank")
+            {
+                return;
+            }
+            Process.Start("chrome.exe", e.Url.AbsoluteUri);
+            e.Cancel = true;
         }
     }
 }
