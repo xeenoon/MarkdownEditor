@@ -22,6 +22,7 @@ namespace MarkdownEditor
             result = Regex.Replace(result, "\n\n", "<br>");
 
             result = result.RemoveBlockQuotes();
+            result = result.ReplaceLists();
             result = result.RemoveAsterixs();
             result = result.RemoveHeadings();
             return result;
@@ -108,8 +109,17 @@ namespace MarkdownEditor
                 string removeHashes = before.Substring(0, before.Length - hashes);
                 if (removeHashes == "" || removeHashes.EndsWith("<br>") || removeHashes.EndsWith("\n")) //Is this a new line? Or is it the first line
                 {
-                    removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">",hashes); //Add the first tag
-                    string after = text.Substring(startidx + 2).ReplaceFirst("<br>", string.Format("</h{0}>", hashes)); //Remove the '# '
+                    string after = "";
+                    if (removeHashes.EndsWith("<br>"))
+                    {
+                        removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">", hashes); //Add the first tag
+                        after = text.Substring(startidx + 2).ReplaceFirst("<br>", string.Format("</h{0}>", hashes)); //Remove the '# '
+                    }
+                    else
+                    {
+                        removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">", hashes); //Add the first tag
+                        after = text.Substring(startidx + 2).ReplaceFirst("\n", string.Format("</h{0}>", hashes)); //Remove the '# '
+                    }
                     if (!after.Contains("</h")) //Has the end heading tag not been added?
                     {
                         //This means this is the last line
@@ -174,6 +184,67 @@ namespace MarkdownEditor
 
             //No change?
             return text; //Just return the input
+        }
+        #endregion
+        #region NumberedList
+        public static string ReplaceLists(this string text)
+        {
+            if (text.Contains("1. ")) //Contains a numbered list?
+            {
+                int startidx = text.IndexOf("1. ");
+                int endoflist = EndOfList(text);
+                string before = text.Substring(0,startidx);
+                string after = text.Substring(endoflist);
+                string list = text.Substring(startidx, endoflist-startidx).RemoveNumberedListItems();
+                list = before + "<ol style=\"margin: 0 0 0 0;padding: 5 0 0 40\">" + list + "</ol>" + after;
+                return ReplaceLists(list);
+            }
+            return text;
+        }
+        public static int EndOfList(string text)
+        {
+            int lastidx = text.Length;
+            for (int i = 0; i < text.Length-2; i++) 
+            {
+                char c = text[i];
+                if (char.IsNumber(c) && text[i+1] == '.' && text[i+2] == ' ') //Is it a list item?
+                {
+                    lastidx = i;
+                }
+            }
+            if (text.IndexOf("\n", lastidx) == -1)
+            {
+                lastidx = text.IndexOf("<br>", lastidx);
+                if (lastidx == -1)
+                {
+                    lastidx = text.Length;
+                }
+            } //Search for both "<br>" and "\n"
+            else
+            {
+                lastidx = text.IndexOf("\n", lastidx);
+            }
+            return lastidx;
+        }
+        public static string RemoveNumberedListItems(this string text)
+        {
+            for (int i = 0; i < text.Length - 2; i++)
+            {
+                char c = text[i];
+                if (char.IsNumber(c) && text[i + 1] == '.' && text[i + 2] == ' ') //Is it a list item?
+                {
+                    string before = text.Substring(0,i).Trim(new char[10] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}); //Remove trailing numbers
+                    int end = text.IndexOf("\n",i); //Find the end of the line
+                    if (end == -1) //End of text?
+                    {
+                        end = text.Length;
+                    }
+                    string after = text.Substring(end);
+                    string replace = "<li>" + text.Substring(i + 2, end-i-2) + "</li>";
+                    return RemoveNumberedListItems(before + replace + after);
+                }
+            }
+            return text;
         }
         #endregion
     }
