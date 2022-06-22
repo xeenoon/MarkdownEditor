@@ -18,9 +18,11 @@ namespace MarkdownEditor
 
         public string GetHtml()
         {
-            string result = rawdata.RemoveAsterixs();
+            string result = rawdata;
             result = Regex.Replace(result, "\n\n", "<br>");
-            result = Regex.Replace(result, "\n", "");
+
+            result = result.RemoveBlockQuotes();
+            result = result.RemoveAsterixs();
             result = result.RemoveHeadings();
             return result;
         }
@@ -104,7 +106,7 @@ namespace MarkdownEditor
                 int hashes = before.TrailingHashes();
 
                 string removeHashes = before.Substring(0, before.Length - hashes);
-                if (removeHashes == "" || removeHashes.EndsWith("<br>")) //Is this a new line? Or is it the first line
+                if (removeHashes == "" || removeHashes.EndsWith("<br>") || removeHashes.EndsWith("\n")) //Is this a new line? Or is it the first line
                 {
                     removeHashes = removeHashes + string.Format("<h{0} style=\"margin:0\">",hashes); //Add the first tag
                     string after = text.Substring(startidx + 2).ReplaceFirst("<br>", string.Format("</h{0}>", hashes)); //Remove the '# '
@@ -139,11 +141,34 @@ namespace MarkdownEditor
             if (text.Contains("> ")) //Does it have blockquotes?
             {
                 int startidx = text.IndexOf("> ");
-                string before = text.Substring(0,startidx+1);
+                string before = text.Substring(0,startidx);
+                string after = text.Substring(startidx+2);
 
-                if (before == "" || before.EndsWith("<br>")) //Is this a new line? Or is it the first line
+                if (before == "" || before.EndsWith("<br>") || before.EndsWith("\n")) //Is this a new line? Or is it the first line
                 {
                     //This is a valid quoteblock
+                    if (after.Contains("\n> ")) //Is the quote multiline
+                    {
+                        var end = after.IndexOf("\n", after.LastIndexOf("\n> ") + 1);
+                        if (end == -1) //Is there no '\n'
+                        {
+                            end = after.Length; //Quote is at the end, just add it to the end
+                        }
+                        string quote = "<blockquote style=\"background: #f9f9f9; border-left: 10px solid #ccc; margin: 1.5em 10px; padding: 0.2em 10px 0.1em 10px;\">" + Regex.Replace(after.Substring(0, end), "\n> ", "<br>") + "</blockquote>";
+                        return before + RemoveBlockQuotes(quote) + after.Substring(end);
+                    }
+                    else
+                    {
+                        //One line quote?
+                        var end = after.IndexOf("\n");
+                        if (end == -1) //Is there no '\n'
+                        {
+                            end = after.Length; //Quote is at the end, just add it to the end
+                        }
+
+                        string quote = "<blockquote style=\"background: #f9f9f9; border-left: 10px solid #ccc; margin: 0.5em 10px; padding: 0.2em 10px 0.1em 10px;\">" + Regex.Replace(after.Substring(0, end), "\n> ", "<br>") + "</blockquote>";
+                        return before + RemoveBlockQuotes(quote) + after.Substring(end);
+                    }
                 }
             }
 
