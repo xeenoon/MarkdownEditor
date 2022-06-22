@@ -24,5 +24,10 @@ namespace MarkdownEditor
             CustomMarkdown customMarkdown = new CustomMarkdown(md);
             webBrowser1.DocumentText = customMarkdown.GetHtml();
         }
+
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            webBrowser1.Document.Window.ScrollTo(0, webBrowser1.Document.Body.ScrollRectangle.Height);
+        }
     }
 }

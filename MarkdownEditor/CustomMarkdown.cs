@@ -18,7 +18,7 @@ namespace MarkdownEditor
 
         public string GetHtml()
         {
-            string result = rawdata;
+            string result = "<head>" + rawdata;
             result = Regex.Replace(result, "\n\n", "<br>");
 
             result = result.RemoveBlockQuotes();
@@ -26,7 +26,8 @@ namespace MarkdownEditor
             result = result.RemoveAsterixs();
             result = result.RemoveHeadings();
             result = result.RemoveCode();
-            return result;
+            result = result.RemoveImages();
+            return result + "</head>";
         }
     }
 
@@ -274,6 +275,26 @@ namespace MarkdownEditor
 
             //No change?
             return processString.Trim(); //Return the original text
+        }
+        #endregion
+        #region Images
+        public static string RemoveImages(this string text)
+        {
+            if (text.Contains("![") && text.Contains("](") && text.Contains(")"))
+            {
+                int imageidx = text.IndexOf("![");
+                int nameEndIdx = text.IndexOf("](", imageidx);
+                string name = text.Substring(imageidx+2, nameEndIdx-imageidx-2);
+
+                int closingBracketIdx = text.IndexOf(")", nameEndIdx);
+                string imagelink = text.Substring(nameEndIdx+2, closingBracketIdx-nameEndIdx-2);
+
+                string result = string.Format("<img src=\"{0}\" alt=\"{1}\">", imagelink, name);
+                string before = text.Substring(0,imageidx);
+                string after = text.Substring(closingBracketIdx+1);
+                return RemoveImages(before + result + after);
+            }
+            return text;
         }
         #endregion
     }
