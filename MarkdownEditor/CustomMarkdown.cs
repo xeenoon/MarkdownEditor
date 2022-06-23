@@ -90,6 +90,18 @@ namespace MarkdownEditor
                         return RemoveAsterixs((before + "<i>" + after).ReplaceTrailingAsterixs("*", "</i>"));
                     }
                 }
+
+                if (lastthree.Contains("~~"))
+                //Two crossouts, must be at end. Will have already fired if it was at the start
+                {
+                    string before = processString.Substring(0, i - 1); //Find everything before the two asterixes
+                    string after = processString.Substring(i + 1); //Get the stuff that comes afterwards
+                    if (after.Contains("~~")) //Will there be a closing set?
+                    {
+                        return RemoveAsterixs((before + "<strike>" + after).ReplaceTrailingAsterixs("~~", "</strike>"));
+                    }
+                    //Continue, check to see if there is a closing set for the other types
+                }
             }
 
             //No change?
@@ -250,7 +262,7 @@ namespace MarkdownEditor
                 {
                     lastidx = i;
                 }
-                else if (c == '<' && text.Substring(i, 5) == "</ul>")
+                else if (c == '<' && text.Length - i >= 5 && text.Substring(i, 5) == "</ul>")
                 {
                     lastidx = i;
                 }
