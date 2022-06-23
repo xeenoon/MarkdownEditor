@@ -30,6 +30,9 @@ namespace MarkdownEditor
             result = result.RemoveCode();
             result = result.RemoveLinks();
             result = result.RemoveImages();
+            //Remove \'s
+            result = result.RemoveSlashes(); ;
+
             return result;
         }
     }
@@ -58,7 +61,7 @@ namespace MarkdownEditor
                 char c = processString[i];
 
                 string lastthree = processString.Substring(i - 2, 3);
-                if (lastthree.Contains("***")) //All asterixes, bold and italics
+                if (lastthree.Contains("***") && (i == 2 || processString[i-3] != '\\')) //All asterixes, bold and italics. Also check for escaping '\'
                 {
                     string before = processString.Substring(0, i - 2); //Find everything before the asterixes
                     string after = processString.Substring(i + 1); //Get the stuff that comes afterwards
@@ -68,7 +71,7 @@ namespace MarkdownEditor
                     }
                     //Continue, check to see if there is a closing set for the other types
                 }
-                if (lastthree.Contains("**") && processString[i + 1] != '*')
+                if (lastthree.Contains("**") && processString[i + 1] != '*' && processString[i-2] != '\\')
                 //Two asterixes, must be at end. Will have already fired if it was at the start
                 //Next character CANNOT be a *, if it is then the top event should be fired next time around
                 {
@@ -80,7 +83,7 @@ namespace MarkdownEditor
                     }
                     //Continue, check to see if there is a closing set for the other types
                 }
-                if (c == '*' && processString[i + 1] != '*')
+                if (c == '*' && processString[i + 1] != '*' && processString[i-1] != '\\')
                 //Is it just this one that is an asterix?
                 {
                     string before = processString.Substring(0, i); //Find everything before the asterix
@@ -91,7 +94,7 @@ namespace MarkdownEditor
                     }
                 }
 
-                if (lastthree.Contains("~~"))
+                if (lastthree.Contains("~~") && processString[i-2] != '\\')
                 //Two crossouts, must be at end. Will have already fired if it was at the start
                 {
                     string before = processString.Substring(0, i - 1); //Find everything before the two asterixes
@@ -426,5 +429,22 @@ namespace MarkdownEditor
             return text;
         }
         #endregion
+        public static string RemoveSlashes(this string s)
+        {
+            string buffer = "";
+            for (int i = 0; i < s.Length; i++)
+            {
+                char c = s[i];
+                if (c != '\\')
+                {
+                    buffer += c;
+                }
+                else if (i != s.Length-1 && s[i+1] == '\\') //Double slashes?
+                {
+                    buffer += c;
+                }
+            }
+            return buffer;
+        }
     }
 }
