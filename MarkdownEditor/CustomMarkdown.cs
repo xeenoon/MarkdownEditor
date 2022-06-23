@@ -18,7 +18,9 @@ namespace MarkdownEditor
 
         public string GetHtml()
         {
-            string result = rawdata;
+            //string result = "<style>ol,ul { padding: 0 0 100 0; margin: 0 0 100 0;}</style>"; //css
+            string result = "";
+            result += rawdata;
             result = Regex.Replace(result, "\n\n", "<br>");
 
             result = result.RemoveBlockQuotes();
@@ -189,44 +191,73 @@ namespace MarkdownEditor
         }
         #endregion
         #region List
+        public enum ListType
+        {
+            Numbered,
+            Bullets
+        }
         public static string ReplaceLists(this string text)
         {
-            if (text.Contains("1. ")) //Contains a numbered list?
-            {
-                int startidx = text.IndexOf("1. ");
-                int endoflist = EndOfList(ref text);
-                string before = text.Substring(0, startidx);
-                string after = text.Substring(endoflist);
-                string list = text.Substring(startidx, endoflist - startidx).RemoveNumberedListItems();
-                list = before + "<ol style=\"margin: 0 0 0 0;padding: 5 0 0 40\">" + list + "</ol>" + after;
-                return ReplaceLists(list);
-            }
             if (text.Contains("- ")) //Contains bullets?
             {
-                int startidx = text.IndexOf("- ");
-                int endoflist = EndOfList(ref text);
+                int startidx = 0;
+                RetryStartIdx:
+                startidx = text.IndexOf("- ", startidx);
+                if (startidx == -1)
+                {
+                    goto NumberList;
+                }
+                if (startidx == text.Length-3 || !char.IsLetter(text[startidx+2]))
+                {
+                    ++startidx;
+                    goto RetryStartIdx;
+                }
+                int endoflist = EndOfList(ref text, ListType.Bullets, startidx);
                 string before = text.Substring(0, startidx);
                 string after = text.Substring(endoflist);
                 string list = text.Substring(startidx, endoflist - startidx).RemoveBullettedListItems();
-                list = before + "<ul style=\"margin: 0 0 0 0;padding: 5 0 0 40\">" + list + "</ul>" + after;
+                list = before + "<ul style=\"margin: 0 0 0 0;padding: 5 0 0 20\">" + list + "</ul>" + after;
+                return ReplaceLists(list);
+            }
+            NumberList:
+            if (text.Contains("1. ")) //Contains a numbered list?
+            {
+                int startidx = text.IndexOf("1. ");
+                int endoflist = EndOfList(ref text, ListType.Numbered, startidx);
+                string before = text.Substring(0, startidx);
+                string after = text.Substring(endoflist);
+                string list = text.Substring(startidx, endoflist - startidx).RemoveNumberedListItems();
+                list = before + "<ol style=\"margin: 0 0 0 0;padding: 5 0 0 20\">" + list + "</ol>" + after;
                 return ReplaceLists(list);
             }
             return text;
         }
-        public static int EndOfList(ref string text)
+        public static int EndOfList(ref string text, ListType listType, int startidx)
         {
             int lastidx = text.Length;
-            for (int i = 0; i < text.Length - 2; i++)
+            for (int i = startidx; i < text.Length - 2; i++)
             {
                 char c = text[i];
-                if ((char.IsNumber(c) && text[i + 1] == '.' && text[i + 2] == ' ') || (c == '-' && text[i+1] == ' ')) //Is it a list item?
+                if (char.IsNumber(c) && text[i + 1] == '.' && text[i + 2] == ' ') //Is it a list item?
+                {
+                    if (listType == ListType.Bullets)
+                    {
+                        break;
+                    }
+                    lastidx = i;
+                }
+                else if (c == '-' && text[i + 1] == ' ')
+                {
+                    lastidx = i;
+                }
+                else if (c == '<' && text.Substring(i, 5) == "</ul>")
                 {
                     lastidx = i;
                 }
                 else if (c == '\\') //Indicating end of a list?
                 {
                     lastidx = i;
-                    text = text.Substring(0,i) + "<br>" + text.Substring(i+1); //Remove the '\'
+                    text = text.Substring(0,i) + "\n" + text.Substring(i+1); //Remove the '\'
                     break; //End immediatly
                 }
             }
