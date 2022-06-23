@@ -131,9 +131,9 @@
 
 **Bold text**
 
-&lt;h1 style="background:gray"&gt;Actual heading&lt;/h1&gt;
+&lt;h1 style="background:gray; padding=0 80"&gt;Actual heading&lt;/h1&gt;
 
-&lt;div id="user-greeting" style="text-align: centre;"&gt;Welcome back, user&lt;/div&gt;
+&lt;button style="margin: 0 90; background:red; color=white"&gt;**Click me and you die**&lt;/button&gt;
 
 https://google.com</value>
   </data>
