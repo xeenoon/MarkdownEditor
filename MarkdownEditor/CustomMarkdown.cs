@@ -194,24 +194,40 @@ namespace MarkdownEditor
             if (text.Contains("1. ")) //Contains a numbered list?
             {
                 int startidx = text.IndexOf("1. ");
-                int endoflist = EndOfList(text);
+                int endoflist = EndOfList(ref text);
                 string before = text.Substring(0, startidx);
                 string after = text.Substring(endoflist);
                 string list = text.Substring(startidx, endoflist - startidx).RemoveNumberedListItems();
                 list = before + "<ol style=\"margin: 0 0 0 0;padding: 5 0 0 40\">" + list + "</ol>" + after;
                 return ReplaceLists(list);
             }
+            if (text.Contains("- ")) //Contains bullets?
+            {
+                int startidx = text.IndexOf("- ");
+                int endoflist = EndOfList(ref text);
+                string before = text.Substring(0, startidx);
+                string after = text.Substring(endoflist);
+                string list = text.Substring(startidx, endoflist - startidx).RemoveBullettedListItems();
+                list = before + "<ul style=\"margin: 0 0 0 0;padding: 5 0 0 40\">" + list + "</ul>" + after;
+                return ReplaceLists(list);
+            }
             return text;
         }
-        public static int EndOfList(string text)
+        public static int EndOfList(ref string text)
         {
             int lastidx = text.Length;
             for (int i = 0; i < text.Length - 2; i++)
             {
                 char c = text[i];
-                if (char.IsNumber(c) && text[i + 1] == '.' && text[i + 2] == ' ') //Is it a list item?
+                if ((char.IsNumber(c) && text[i + 1] == '.' && text[i + 2] == ' ') || (c == '-' && text[i+1] == ' ')) //Is it a list item?
                 {
                     lastidx = i;
+                }
+                else if (c == '\\') //Indicating end of a list?
+                {
+                    lastidx = i;
+                    text = text.Substring(0,i) + "<br>" + text.Substring(i+1); //Remove the '\'
+                    break; //End immediatly
                 }
             }
             int[] positions = new int[2] { text.IndexOf("\n", lastidx), text.IndexOf("<br>", lastidx) };
@@ -247,6 +263,31 @@ namespace MarkdownEditor
                     string after = text.Substring(end);
                     string replace = "<li>" + text.Substring(i + 2, end - i - 2) + "</li>";
                     return RemoveNumberedListItems(before + replace + after);
+                }
+            }
+            return text;
+        }
+        public static string RemoveBullettedListItems(this string text)
+        {
+            for (int i = 0; i < text.Length - 2; i++)
+            {
+                char c = text[i];
+                if (c == '-' && text[i + 1] == ' ') //Is it a list item?
+                {
+                    string before = text.Substring(0, i);
+                    int[] positions = new int[2] { text.IndexOf("\n", i), text.IndexOf("<br>", i) };
+                    for (int idx = 0; idx < positions.Length; idx++)
+                    {
+                        int item = positions[idx];
+                        if (item == -1)
+                        {
+                            positions[idx] = text.Length;
+                        }
+                    }
+                    var end = positions.OrderBy(it => it).FirstOrDefault();
+                    string after = text.Substring(end);
+                    string replace = "<li>" + text.Substring(i + 2, end - i - 2) + "</li>";
+                    return RemoveBullettedListItems(before + replace + after);
                 }
             }
             return text;
