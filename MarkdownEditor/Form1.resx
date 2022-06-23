@@ -126,8 +126,16 @@
 ```Here is some code which looks like it is in a code font ```
 
 1. Item 1
+- Item 1
 2. Item 2
+- Sub item
 3. Item 3
+- Another subitem\\
+- Just a normal bullet
+1. Another list
+- Another subitem
+2. ~~Next point~~\
+3. Just a normal '3. '
 
 **Bold text**
 
