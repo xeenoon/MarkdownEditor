@@ -178,22 +178,33 @@ namespace MarkdownEditor
                     //This is a valid quoteblock
                     if (after.Contains("\n> ")) //Is the quote multiline
                     {
-                        var end = after.IndexOf("\n", after.LastIndexOf("\n> ") + 1);
-                        if (end == -1) //Is there no '\n'
+                        int[] positions = new int[2] { after.IndexOf("\n"), after.IndexOf("<br>") };
+                        for (int idx = 0; idx < positions.Length; idx++)
                         {
-                            end = after.Length; //Quote is at the end, just add it to the end
+                            int item = positions[idx];
+                            if (item == -1)
+                            {
+                                positions[idx] = text.Length;
+                            }
                         }
+                        var end = positions.OrderBy(it => it).FirstOrDefault();
+
                         string quote = "<blockquote style=\"background: #f9f9f9; border-left: 10px solid #ccc; margin: 1.5em 10px; padding: 0.2em 10px 0.1em 10px;\">" + Regex.Replace(after.Substring(0, end), "\n> ", "<br>") + "</blockquote>";
                         return before + RemoveBlockQuotes(quote) + after.Substring(end);
                     }
                     else
                     {
                         //One line quote?
-                        var end = after.IndexOf("\n");
-                        if (end == -1) //Is there no '\n'
+                        int[] positions = new int[2] { after.IndexOf("\n"), after.IndexOf("<br>") };
+                        for (int idx = 0; idx < positions.Length; idx++)
                         {
-                            end = after.Length; //Quote is at the end, just add it to the end
+                            int item = positions[idx];
+                            if (item == -1)
+                            {
+                                positions[idx] = text.Length;
+                            }
                         }
+                        var end = positions.OrderBy(it => it).FirstOrDefault();
 
                         string quote = "<blockquote style=\"background: #f9f9f9; border-left: 10px solid #ccc; margin: 0.5em 10px; padding: 0.2em 10px 0.1em 10px;\">" + Regex.Replace(after.Substring(0, end), "\n> ", "<br>") + "</blockquote>";
                         return before + RemoveBlockQuotes(quote) + after.Substring(end);

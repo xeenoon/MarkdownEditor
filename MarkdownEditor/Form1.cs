@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using HtmlAgilityPack;
+using Microsoft.AspNetCore.Html;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,13 +15,26 @@ namespace MarkdownEditor
 {
     public partial class Form1 : Form
     {
+        List<Button> formattingButtons = new List<Button>();
         public Form1()
         {
             InitializeComponent();
             var md = Properties.Resources.DefaultText;
             richTextBox1.Text = md;
+            richTextBox1.AutoWordSelection = true;
             CustomMarkdown customMarkdown = new CustomMarkdown(md);
             webBrowser1.DocumentText = customMarkdown.GetHtml();
+
+            formattingButtons.Add(Bold_button);
+            formattingButtons.Add(Code_button);
+            formattingButtons.Add(Font_button);
+            formattingButtons.Add(Heading_button);
+            formattingButtons.Add(Image_button);
+            formattingButtons.Add(Italics_button);
+            formattingButtons.Add(Link_button);
+            formattingButtons.Add(Quote_button);
+            formattingButtons.Add(Strikethrough_button);
+            formattingButtons.Add(Underline_button);
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -52,16 +66,14 @@ namespace MarkdownEditor
         [Flags]
         enum Style
         {
-            Default=1,
-            Heading1=2,
-            Heading2=4,
-            Heading3=8,
-            Heading4=16,
-            Bold=32,
-            Italics=64,
-            Strikethrough=128,
-            Code=256,
-            Quote=512,
+            None = 0,
+            Default = 1,
+            Bold = 2,
+            Italics = 4, 
+            Strikethrough = 8,
+            Code = 16,
+            Quote = 32,
+            Underline = 64,
         }
         private void richTextBox1_SelectionChanged(object sender, EventArgs e)
         {
@@ -69,20 +81,52 @@ namespace MarkdownEditor
             var length = richTextBox1.SelectionLength;
 
             string toconvert = richTextBox1.Text;
-            toconvert += toconvert.Insert(start, "<div id=\"startofselection\">"); //Create a div that we can easily find with its ID
-            toconvert += toconvert.Insert(start+length + 1, "⎳"); //Second div
+            toconvert += toconvert.Insert(start, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
+            toconvert += toconvert.Insert(start + length + 1, "<div id=\"endofselection\"></div>"); //End the div
 
             CustomMarkdown customMarkdown = new CustomMarkdown(toconvert);
             var html = customMarkdown.GetHtml();
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
             var elementA = doc.GetElementbyId("startofselection");
+            Style applied = Style.None;
+            HtmlNode last = elementA;
+
+            ResetAllButtons();
+
+            while (last == elementA || last.Name == "div")
+            {
+                last = last.ParentNode;
+                switch (last.Name)
+                {
+                    case "code":
+                        FormattingClicked(Code_button, null);
+                        break;
+                    case "i":
+                        FormattingClicked(Italics_button, null);
+                        break;
+                    case "b":
+                        FormattingClicked(Bold_button, null);
+                        break;
+                    case "quoteblock":
+                        FormattingClicked(Quote_button, null);
+                        break;
+                    case "u":
+                        FormattingClicked(Underline_button, null);
+                        break;
+                    case "strike":
+                        FormattingClicked(Strikethrough_button, null);
+                        break;
+                }
+            }
+
+            return;
         }
 
         private void FormattingClicked(object sender, EventArgs e)
         {
             var button = ((Button)sender);
-            string selectname = button.Name.Split('_')[0]+"_select";
+            string selectname = button.Name.Split('_')[0] + "_select";
             if ((string)button.BackgroundImage.Tag == null)
             {
                 button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject(selectname);
@@ -91,6 +135,14 @@ namespace MarkdownEditor
             else
             {
                 button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject(selectname.Split('_')[0]);
+                button.BackgroundImage.Tag = null;
+            }
+        }
+        private void ResetAllButtons()
+        {
+            foreach (var button in formattingButtons)
+            {
+                button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject(button.Name.Split('_')[0]);
                 button.BackgroundImage.Tag = null;
             }
         }
