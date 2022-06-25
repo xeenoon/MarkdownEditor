@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -89,7 +90,6 @@ namespace MarkdownEditor
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
             var elementA = doc.GetElementbyId("startofselection");
-            Style applied = Style.None;
             HtmlNode last = elementA;
 
             ResetAllButtons();
@@ -123,8 +123,6 @@ namespace MarkdownEditor
                         break;
                 }
             }
-
-            return;
         }
 
         private void FormattingClicked(object sender, EventArgs e)
@@ -149,6 +147,84 @@ namespace MarkdownEditor
                 button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject(button.Name.Split('_')[0]);
                 button.BackgroundImage.Tag = null;
             }
+        }
+
+        private void BoldClicked(object sender, EventArgs e)
+        {
+            FormattingClicked(sender, e);
+            var start = richTextBox1.SelectionStart;
+            var length = richTextBox1.SelectionLength;
+
+            richTextBox1.Text = richTextBox1.Text.Insert(start, "**");
+            richTextBox1.Text = richTextBox1.Text.Insert(start+length+2, "**");
+            var replace = richTextBox1.Text.Replace("****", "");
+            if (richTextBox1.Text == replace)
+            {
+                richTextBox1.Select(start+2, length);
+            }
+            else
+            {
+                richTextBox1.Text = replace;
+                richTextBox1.Select(start - 2, length);
+            }
+            richTextBox1.Focus();
+        }
+
+        private void ItalicsClicked(object sender, EventArgs e)
+        {
+            FormattingClicked(sender, e);
+            var start = richTextBox1.SelectionStart;
+            var length = richTextBox1.SelectionLength;
+
+            //Check if we are selecting the asterix's as well
+            if (richTextBox1.Text[start] == '*')
+            {
+                start++;
+                length--;
+            }
+            if (richTextBox1.Text[start+length-1] == '*')
+            {
+                length--;
+            }
+
+            int add = 0;
+            if (start == 0 || richTextBox1.Text[start-1] != '*' || (start >=2 && richTextBox1.Text[start-2] == '*')) //Cannot already be italics, but can be bold
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "*");
+                add = 1;
+            }
+            else //It is already italics
+            {
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start-1) + richTextBox1.Text.Substring(start); //Remove the italics thing
+                add = -1;
+            }
+            int endidx = start + length + add;
+            if (endidx == richTextBox1.Text.Length || richTextBox1.Text[endidx] != '*' || (endidx <= richTextBox1.Text.Length-1 && richTextBox1.Text[endidx+1] == '*')) //Cannot be italics, but can be bold
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(endidx, "*");
+            }
+            else
+            {
+                richTextBox1.Text = richTextBox1.Text.Substring(0, endidx) + richTextBox1.Text.Substring(endidx+1);
+            }
+            if (add==1)
+            {
+                start++;
+                richTextBox1.Select(start, length);
+            }
+            else
+            {
+                start--;
+                richTextBox1.Select(start, length);
+            }
+            var replace = richTextBox1.Text.Replace("****", "**");
+            if (richTextBox1.Text != replace) //Moving stuffs
+            {
+                start -= 2;
+                richTextBox1.Text = replace;
+                richTextBox1.Select(start, length);
+            }
+            richTextBox1.Focus();
         }
     }
 }

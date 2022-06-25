@@ -30,7 +30,6 @@ namespace MarkdownEditor {
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         
-        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -62,9 +61,9 @@ namespace MarkdownEditor {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Background {
+        public static System.Drawing.Bitmap backgroundPanel_BackgroundImage {
             get {
-                object obj = ResourceManager.GetObject("Background", resourceCulture);
+                object obj = ResourceManager.GetObject("backgroundPanel.BackgroundImage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

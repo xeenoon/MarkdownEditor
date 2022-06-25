@@ -117,6 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="backgroundPanel.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAASoAAAB6CAYAAAAIwx5sAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAGwSURBVHhe7dQxDcBAEMCwo/VQOpU/ivtOxZDBkUwh87UAcbPneQGSjArIMyogz6iAPKMC8owK
+        yDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8
+        owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMq
+        IM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLy
+        jArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+o
+        gDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArI
+        Myogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyj
+        AvKMCsgzKiDPqIC8f1QAXbMXygckrbRAcDgAAAAASUVORK5CYII=
+</value>
+  </data>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value># Cool cat rainbow thingy
 
@@ -145,9 +159,5 @@
 
 https://google.com
 </value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

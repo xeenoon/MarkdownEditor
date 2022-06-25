@@ -31,7 +31,7 @@ namespace MarkdownEditor
         /// </summary>
         private void InitializeComponent()
         {
-            var resources = Properties.Resources.ResourceManager;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.backgroundPanel = new System.Windows.Forms.Panel();
             this.Underline_button = new System.Windows.Forms.Button();
@@ -74,7 +74,7 @@ namespace MarkdownEditor
             // backgroundPanel
             // 
             this.backgroundPanel.BackColor = System.Drawing.Color.LightGray;
-            this.backgroundPanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Background")));
+            this.backgroundPanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("backgroundPanel.BackgroundImage")));
             this.backgroundPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.backgroundPanel.Controls.Add(this.Underline_button);
             this.backgroundPanel.Controls.Add(this.Font_button);
@@ -93,7 +93,6 @@ namespace MarkdownEditor
             // 
             // Underline_button
             // 
-            this.Underline_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Underline")));
             this.Underline_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Underline_button.Location = new System.Drawing.Point(107, 9);
             this.Underline_button.Name = "Underline_button";
@@ -104,7 +103,6 @@ namespace MarkdownEditor
             // 
             // Font_button
             // 
-            this.Font_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Font")));
             this.Font_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Font_button.Location = new System.Drawing.Point(212, 9);
             this.Font_button.Name = "Font_button";
@@ -115,7 +113,6 @@ namespace MarkdownEditor
             // 
             // Link_button
             // 
-            this.Link_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Link")));
             this.Link_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Link_button.Location = new System.Drawing.Point(342, 9);
             this.Link_button.Name = "Link_button";
@@ -126,7 +123,6 @@ namespace MarkdownEditor
             // 
             // Image_button
             // 
-            this.Image_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Image")));
             this.Image_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Image_button.Location = new System.Drawing.Point(302, 9);
             this.Image_button.Name = "Image_button";
@@ -137,7 +133,6 @@ namespace MarkdownEditor
             // 
             // Heading_button
             // 
-            this.Heading_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Heading")));
             this.Heading_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Heading_button.Location = new System.Drawing.Point(247, 9);
             this.Heading_button.Name = "Heading_button";
@@ -148,7 +143,6 @@ namespace MarkdownEditor
             // 
             // Quote_button
             // 
-            this.Quote_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Quote")));
             this.Quote_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Quote_button.Location = new System.Drawing.Point(177, 9);
             this.Quote_button.Name = "Quote_button";
@@ -159,7 +153,6 @@ namespace MarkdownEditor
             // 
             // Code_button
             // 
-            this.Code_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Code")));
             this.Code_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Code_button.Location = new System.Drawing.Point(142, 9);
             this.Code_button.Name = "Code_button";
@@ -170,29 +163,26 @@ namespace MarkdownEditor
             // 
             // Italics_button
             // 
-            this.Italics_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Italics")));
             this.Italics_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Italics_button.Location = new System.Drawing.Point(72, 9);
             this.Italics_button.Name = "Italics_button";
             this.Italics_button.Size = new System.Drawing.Size(30, 30);
             this.Italics_button.TabIndex = 4;
             this.Italics_button.TabStop = false;
-            this.Italics_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Italics_button.Click += new System.EventHandler(this.ItalicsClicked);
             // 
             // Bold_button
             // 
-            this.Bold_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Bold")));
             this.Bold_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Bold_button.Location = new System.Drawing.Point(37, 9);
             this.Bold_button.Name = "Bold_button";
             this.Bold_button.Size = new System.Drawing.Size(30, 30);
             this.Bold_button.TabIndex = 3;
             this.Bold_button.TabStop = false;
-            this.Bold_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Bold_button.Click += new System.EventHandler(this.BoldClicked);
             // 
             // Strikethrough_button
             // 
-            this.Strikethrough_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Strikethrough")));
             this.Strikethrough_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Strikethrough_button.Location = new System.Drawing.Point(2, 9);
             this.Strikethrough_button.Name = "Strikethrough_button";
