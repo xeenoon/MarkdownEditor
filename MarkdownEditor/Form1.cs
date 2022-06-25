@@ -81,8 +81,8 @@ namespace MarkdownEditor
             var length = richTextBox1.SelectionLength;
 
             string toconvert = richTextBox1.Text;
-            toconvert += toconvert.Insert(start, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
-            toconvert += toconvert.Insert(start + length + 1, "<div id=\"endofselection\"></div>"); //End the div
+            toconvert = toconvert.Insert(start, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
+            //toconvert = toconvert.Insert(start + length + 36, "<div id=\"endofselection\"></div>"); //End the div
 
             CustomMarkdown customMarkdown = new CustomMarkdown(toconvert);
             var html = customMarkdown.GetHtml();
@@ -94,9 +94,13 @@ namespace MarkdownEditor
 
             ResetAllButtons();
 
-            while (last == elementA || last.Name == "div")
+            while (true)
             {
                 last = last.ParentNode;
+                if (last == null)
+                {
+                    return;
+                }
                 switch (last.Name)
                 {
                     case "code":
@@ -108,7 +112,7 @@ namespace MarkdownEditor
                     case "b":
                         FormattingClicked(Bold_button, null);
                         break;
-                    case "quoteblock":
+                    case "blockquote":
                         FormattingClicked(Quote_button, null);
                         break;
                     case "u":

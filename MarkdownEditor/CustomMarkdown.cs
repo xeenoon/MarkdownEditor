@@ -176,21 +176,21 @@ namespace MarkdownEditor
                 if (before == "" || before.EndsWith("<br>") || before.EndsWith("\n")) //Is this a new line? Or is it the first line
                 {
                     //This is a valid quoteblock
-                    if (after.Contains("\n> ")) //Is the quote multiline
+                    if (after.Contains("\n> ") && after.IndexOf("\n") == after.IndexOf("\n> ")) //Is the quote multiline, is the next quote part in the very next line
                     {
-                        int[] positions = new int[2] { after.IndexOf("\n"), after.IndexOf("<br>") };
-                        for (int idx = 0; idx < positions.Length; idx++)
-                        {
-                            int item = positions[idx];
-                            if (item == -1)
-                            {
-                                positions[idx] = text.Length;
-                            }
-                        }
+                       int[] positions = new int[2] { after.IndexOf("\n", after.LastQuote() + 1), after.IndexOf("<br>", after.LastQuote() + 1) };
+                       for (int idx = 0; idx < positions.Length; idx++)
+                       {
+                           int item = positions[idx];
+                           if (item == -1)
+                           {
+                               positions[idx] = after.Length;
+                           }
+                       }
                         var end = positions.OrderBy(it => it).FirstOrDefault();
 
                         string quote = "<blockquote style=\"background: #f9f9f9; border-left: 10px solid #ccc; margin: 1.5em 10px; padding: 0.2em 10px 0.1em 10px;\">" + Regex.Replace(after.Substring(0, end), "\n> ", "<br>") + "</blockquote>";
-                        return before + RemoveBlockQuotes(quote) + after.Substring(end);
+                        return RemoveBlockQuotes(before + quote + after.Substring(end));
                     }
                     else
                     {
@@ -201,19 +201,43 @@ namespace MarkdownEditor
                             int item = positions[idx];
                             if (item == -1)
                             {
-                                positions[idx] = text.Length;
+                                positions[idx] = after.Length;
                             }
                         }
                         var end = positions.OrderBy(it => it).FirstOrDefault();
 
+
                         string quote = "<blockquote style=\"background: #f9f9f9; border-left: 10px solid #ccc; margin: 0.5em 10px; padding: 0.2em 10px 0.1em 10px;\">" + Regex.Replace(after.Substring(0, end), "\n> ", "<br>") + "</blockquote>";
-                        return before + RemoveBlockQuotes(quote) + after.Substring(end);
+                        return RemoveBlockQuotes(before + quote + after.Substring(end));
                     }
                 }
             }
 
             //No change?
             return text; //Just return the input
+        }
+        public static int LastQuote(this string text, int startidx = 0)
+        {
+            int lastquotestart = 0;
+            for(int i = startidx; i < text.Length-2; ++i)
+            {
+                if (text[i] == '\n')
+                {
+                    if (text[i+1] == '>' && text[i+2] == ' ')
+                    {
+                        lastquotestart = i;
+                    }
+                    else
+                    {
+                        return lastquotestart;
+                    }
+                }
+                if (text.Length-i >= 4 &&  text.Substring(i,4) == "<br>")
+                {
+                    return lastquotestart;
+                }
+            }
+            return lastquotestart;
         }
         #endregion
         #region List
