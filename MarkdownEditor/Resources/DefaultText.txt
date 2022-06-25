@@ -1,0 +1,26 @@
+# Cool cat rainbow thingy
+
+
+![Nyan cat](https://i0.wp.com/www.printmag.com/wp-content/uploads/2021/02/4cbe8d_f1ed2800a49649848102c68fc5a66e53mv2.gif?fit=476%2C280&ssl=1)
+
+```Here is some code which looks like it is in a code font ```
+
+1. Item 1
+- Item 1
+2. Item 2
+- Sub item
+3. Item 3
+- Another subitem\\
+- Just a normal bullet
+1. Another list
+- Another subitem
+2. ~~Next point~~\
+3. Just a normal '3. '
+
+**Bold text**
+
+<h1 style="background:gray; padding=0 80">Actual heading</h1>
+
+<button style="margin: 0 90; background:red; color=white;" title="Button of death">**Click me and you die**</button>
+
+https://google.com
