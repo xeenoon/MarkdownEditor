@@ -96,6 +96,10 @@ namespace MarkdownEditor
 
             while (true)
             {
+                if (last == null)
+                {
+                    return;
+                }
                 last = last.ParentNode;
                 if (last == null)
                 {
