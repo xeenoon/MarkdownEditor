@@ -1208,8 +1208,13 @@ namespace MarkdownEditor
         private void Font_button_Click(object sender, EventArgs e)
         {
             FormattingClicked(sender, e);
-            fontDialog1.ShowDialog();
+            var result = fontDialog1.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
             var font = fontDialog1.Font;
+
             string toplace = "<div>";
             if (font.Underline)
             {
@@ -1223,9 +1228,36 @@ namespace MarkdownEditor
 
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
+
+            var selectedfont = CustomFont();
             int toshift = toplace.Length;
 
-            if (length == 0)
+            if (selectedfont != null) //Is the user modifying an existing thingy
+            {
+                string before = richTextBox1.Text.Substring(0,start);
+                int startidx = before.LastIndexOf("<div>");
+                int newstart = toplace.Length - startidx;
+
+                int endIndex = richTextBox1.Text.LastIndexOf("\">", start) + 2;
+                string usertext = richTextBox1.Text.Substring(endIndex, richTextBox1.Text.IndexOf("</p>", start)-endIndex);
+                toplace += usertext;
+                toplace += "</p>";
+
+                if (font.Strikeout)
+                {
+                    toplace += "~~";
+                }
+                if (font.Underline)
+                {
+                    toplace += "</u>";
+                }
+                toplace += "</div>";
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, startidx) + toplace + richTextBox1.Text.Substring(richTextBox1.Text.IndexOf("</div>", startidx)+6);
+
+                start = newstart;
+            }
+            else if (length == 0)
             {
                 toplace += "text goes here</p>";
                 if (font.Strikeout)
@@ -1262,6 +1294,23 @@ namespace MarkdownEditor
             }
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
+        }
+        public HtmlAgilityPack.HtmlNode CustomFont()
+        {
+            var toconvert = richTextBox1.Text;
+            toconvert = toconvert.Insert(richTextBox1.SelectionStart, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
+
+            var customMarkdown = new CustomMarkdown(toconvert);
+            var html = customMarkdown.GetHtml();
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+            var elementA = doc.GetElementbyId("startofselection");
+
+            if (elementA != null && elementA.PreviousSibling != null && elementA.PreviousSibling.Name == "p")
+            {
+                return elementA.PreviousSibling;
+            }
+            return null;
         }
     }
 }
