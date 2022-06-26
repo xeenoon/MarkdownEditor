@@ -151,16 +151,21 @@ namespace MarkdownEditor
 
         private void BoldClicked(object sender, EventArgs e)
         {
+            if (richTextBox1.Text.Length == 0)
+            {
+                return;
+            }
+
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            if (richTextBox1.Text.Substring(start, 2) == "**") //Selected the asterix's as well?
+            if (richTextBox1.Text.Length >= 2 && richTextBox1.Text.Substring(start, 2) == "**") //Selected the asterix's as well?
             {
                 start += 2;
                 length -= 2;
             }
-            if (richTextBox1.Text.Substring(start+length-2, 2) == "**") //Selected the asterix's as well?
+            if (richTextBox1.Text.Length >= 2 && start + length - 2 >= 0 && richTextBox1.Text.Substring(start + length - 2, 2) == "**") //Selected the asterix's as well?
             {
                 length -= 2;
             }
@@ -247,17 +252,22 @@ namespace MarkdownEditor
 
         private void ItalicsClicked(object sender, EventArgs e)
         {
+            if (richTextBox1.Text.Length == 0)
+            {
+                return;
+            }
+
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
             //Check if we are selecting the asterix's as well
-            if (richTextBox1.Text[start] == '*')
+            if (richTextBox1.Text.Length >= 1 && richTextBox1.Text[start] == '*')
             {
                 start++;
                 length--;
             }
-            if (richTextBox1.Text[start+length-1] == '*')
+            if (richTextBox1.Text.Length >= 1 && start + length - 1 >= 0 && richTextBox1.Text[start+length-1] == '*')
             {
                 length--;
             }
@@ -332,16 +342,21 @@ namespace MarkdownEditor
         }
         private void StrikeClicked(object sender, EventArgs e)
         {
+            if (richTextBox1.Text.Length == 0)
+            {
+                return;
+            }
+
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            if (richTextBox1.Text.Substring(start, 2) == "~~") //Selected the asterix's as well?
+            if (richTextBox1.Text.Length >= 2 && richTextBox1.Text.Substring(start, 2) == "~~") //Selected the asterix's as well?
             {
                 start += 2;
                 length -= 2;
             }
-            if (richTextBox1.Text.Substring(start + length - 2, 2) == "~~") //Selected the asterix's as well?
+            if (richTextBox1.Text.Length >= 2 && start + length - 2 >= 0 && richTextBox1.Text.Substring(start + length - 2, 2) == "~~") //Selected the asterix's as well?
             {
                 length -= 2;
             }
@@ -427,16 +442,21 @@ namespace MarkdownEditor
         }
         private void CodeClicked(object sender, EventArgs e)
         {
+            if (richTextBox1.Text.Length == 0)
+            {
+                return;
+            }
+
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            if (richTextBox1.Text.Substring(start, 3) == "```") //Selected the asterix's as well?
+            if (richTextBox1.Text.Length >= 3 && richTextBox1.Text.Substring(start, 3) == "```") //Selected the asterix's as well?
             {
                 start += 3;
                 length -= 3;
             }
-            if (richTextBox1.Text.Substring(start + length - 3, 3) == "```") //Selected the asterix's as well?
+            if (richTextBox1.Text.Length >= 2 && start + length - 3 >= 0 && richTextBox1.Text.Substring(start + length - 3, 3) == "```") //Selected the asterix's as well?
             {
                 length -= 3;
             }
@@ -522,11 +542,15 @@ namespace MarkdownEditor
         }
         private void UnderlineClicked(object sender, EventArgs e)
         {
+            if (richTextBox1.Text.Length == 0)
+            {
+                return;
+            }
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            if (richTextBox1.Text.Substring(start, 3) == "<u>") //Have we selected the start of a tag?
+            if (richTextBox1.Text.Length >= 3 && richTextBox1.Text.Substring(start, 3) == "<u>") //Have we selected the start of a tag?
             {
                 start += 3;
                 length -= 3;
@@ -832,12 +856,12 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            if (richTextBox1.Text.Substring(start, 2) == "> ") //Did the user select the quote thingy
+            if (richTextBox1.Text.Length >= 2 && richTextBox1.Text.Substring(start, 2) == "> ") //Did the user select the quote thingy
             {
                 start += 2; //de-select the quote thingy
                 length -= 2;
             }
-            if (start >= 1 && richTextBox1.Text.Substring(start-1, 2) == "> ") //Did the user select the quote thingy
+            if (richTextBox1.Text.Length >= 3 && start >= 1 && richTextBox1.Text.Substring(start-1, 2) == "> ") //Did the user select the quote thingy
             {
                 start += 1; //de-select the quote thingy
                 length -= 1;
