@@ -67,7 +67,7 @@ namespace MarkdownEditor
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.BackgroundImage = global::MarkdownEditor.Properties.Resources.Background;
+            this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.Window;
             this.splitContainer1.Panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.splitContainer1.Panel1.Controls.Add(this.HeadingLabel);
             this.splitContainer1.Panel1.Controls.Add(this.H3_button);
