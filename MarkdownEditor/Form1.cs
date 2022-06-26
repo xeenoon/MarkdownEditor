@@ -961,5 +961,41 @@ namespace MarkdownEditor
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
         }
+
+        private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.B:
+                        BoldClicked(Bold_button, null);
+                        break;
+                    case Keys.U:
+                        UnderlineClicked(Underline_button, null);
+                        break;
+                    case Keys.I:
+                        ItalicsClicked(Italics_button, null);
+                        e.SuppressKeyPress = true;
+                        break;
+
+                }
+                if (e.Shift)
+                {
+                    switch (e.KeyCode)
+                    {
+                        case Keys.S:
+                            StrikeClicked(Strikethrough_button, null);
+                            break;
+                        case Keys.Q:
+                            QuoteClicked(Quote_button, null);
+                            break;
+                        case Keys.C:
+                            CodeClicked(Code_button, null);
+                            break;
+                    }
+                }
+            }
+        }
     }
 }
