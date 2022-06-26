@@ -1097,6 +1097,13 @@ namespace MarkdownEditor
             {
                 toadd = "";
             }
+            if (richTextBox1.Text.Length == 0)//Empty?
+            {
+                richTextBox1.Text = toadd + "Heading";
+                richTextBox1.Select(toadd.Length,7);
+                richTextBox1.Focus();
+                return;
+            }
 
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength - (MoveToEndOfHeading(richTextBox1.Text, start) - start);
