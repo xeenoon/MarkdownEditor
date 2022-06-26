@@ -31,6 +31,11 @@ namespace MarkdownEditor
             formattingButtons.Add(Quote_button);
             formattingButtons.Add(Strikethrough_button);
             formattingButtons.Add(Underline_button);
+
+            foreach (var button in formattingButtons)
+            {
+                button.Invalidate();
+            }
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -160,7 +165,14 @@ namespace MarkdownEditor
             else
             {
                 richTextBox1.Text = replace;
-                richTextBox1.Select(start - 2, length);
+                if (start != 0)
+                {
+                    richTextBox1.Select(start - 2, length);
+                }
+                else
+                {
+                    richTextBox1.Select(start, length);
+                }
             }
             richTextBox1.Focus();
         }
@@ -194,7 +206,7 @@ namespace MarkdownEditor
                 add = -1;
             }
             int endidx = start + length + add;
-            if (endidx == richTextBox1.Text.Length || richTextBox1.Text[endidx] != '*' || (endidx <= richTextBox1.Text.Length-1 && richTextBox1.Text[endidx+1] == '*')) //Cannot be italics, but can be bold
+            if (endidx == richTextBox1.Text.Length || richTextBox1.Text[endidx] != '*' || (endidx <= richTextBox1.Text.Length-2 && richTextBox1.Text[endidx+1] == '*')) //Cannot be italics, but can be bold
             {
                 richTextBox1.Text = richTextBox1.Text.Insert(endidx, "*");
             }
@@ -238,6 +250,26 @@ namespace MarkdownEditor
             {
                 richTextBox1.Text = replace;
                 richTextBox1.Select(start - 2, length);
+            }
+            richTextBox1.Focus();
+        }
+        private void CodeClicked(object sender, EventArgs e)
+        {
+            FormattingClicked(sender, e);
+            var start = richTextBox1.SelectionStart;
+            var length = richTextBox1.SelectionLength;
+
+            richTextBox1.Text = richTextBox1.Text.Insert(start, "```");
+            richTextBox1.Text = richTextBox1.Text.Insert(start + length + 3, "```");
+            var replace = richTextBox1.Text.Replace("``````", "");
+            if (richTextBox1.Text == replace)
+            {
+                richTextBox1.Select(start + 3, length);
+            }
+            else
+            {
+                richTextBox1.Text = replace;
+                richTextBox1.Select(start - 3, length);
             }
             richTextBox1.Focus();
         }

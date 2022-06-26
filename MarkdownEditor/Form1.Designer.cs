@@ -159,7 +159,7 @@ namespace MarkdownEditor
             this.Code_button.Size = new System.Drawing.Size(30, 30);
             this.Code_button.TabIndex = 5;
             this.Code_button.TabStop = false;
-            this.Code_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Code_button.Click += new System.EventHandler(this.CodeClicked);
             // 
             // Italics_button
             // 
