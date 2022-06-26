@@ -1191,5 +1191,62 @@ namespace MarkdownEditor
             richTextBox1.Select(start, 4);
             richTextBox1.Focus();
         }
+
+        private void Font_button_Click(object sender, EventArgs e)
+        {
+            FormattingClicked(sender, e);
+            fontDialog1.ShowDialog();
+            var font = fontDialog1.Font;
+            string toplace = "";
+            if (font.Underline)
+            {
+                toplace += "<u>";
+            }
+            if (font.Strikeout)
+            {
+                toplace += "~~";
+            }
+            toplace += string.Format("<p style=\"font-family:{0};font-size:{1}px;font-weight:{2};font-style:{3}\">", font.Name, font.Size, font.Bold ? "bold" : "normal", font.Italic ? "italic" : "normal");
+
+            var start = richTextBox1.SelectionStart;
+            var length = richTextBox1.SelectionLength;
+            int toshift = toplace.Length;
+
+            if (length == 0)
+            {
+                toplace += "text goes here</p>";
+                if (font.Strikeout)
+                {
+                    toplace += "~~";
+                }
+                if (font.Underline)
+                {
+                    toplace += "</u>";
+                }
+                richTextBox1.Text = richTextBox1.Text.Insert(start, toplace);
+
+                start += toshift;
+                length = 14;
+            }
+            else
+            {
+                toplace += richTextBox1.Text.Substring(start, length); //Add the users text
+                toplace += "</p>";
+                if (font.Strikeout)
+                {
+                    toplace += "~~";
+                }
+                if (font.Underline)
+                {
+                    toplace += "</u>";
+                }
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + toplace + richTextBox1.Text.Substring(start + length);
+
+                start += toshift;
+            }
+            richTextBox1.Select(start, length);
+            richTextBox1.Focus();
+        }
     }
 }

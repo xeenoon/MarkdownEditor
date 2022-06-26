@@ -51,6 +51,7 @@ namespace MarkdownEditor
             this.Code_button = new System.Windows.Forms.Button();
             this.Quote_button = new System.Windows.Forms.Button();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.fontDialog1 = new System.Windows.Forms.FontDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -222,7 +223,7 @@ namespace MarkdownEditor
             this.Font_button.Size = new System.Drawing.Size(30, 30);
             this.Font_button.TabIndex = 10;
             this.Font_button.TabStop = false;
-            this.Font_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Font_button.Click += new System.EventHandler(this.Font_button_Click);
             // 
             // Strikethrough_button
             // 
@@ -340,5 +341,6 @@ namespace MarkdownEditor
         private System.Windows.Forms.Button H1_button;
         private System.Windows.Forms.PictureBox HeadingLabel;
         private System.Windows.Forms.Button HeadingBackpanel;
+        private System.Windows.Forms.FontDialog fontDialog1;
     }
 }
