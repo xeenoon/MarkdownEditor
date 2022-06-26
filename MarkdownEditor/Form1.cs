@@ -402,18 +402,93 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            richTextBox1.Text = richTextBox1.Text.Insert(start, "```");
-            richTextBox1.Text = richTextBox1.Text.Insert(start + length + 3, "```");
-            var replace = richTextBox1.Text.Replace("``````", "");
-            if (richTextBox1.Text == replace)
+            if (richTextBox1.Text.Substring(start, 3) == "```") //Selected the asterix's as well?
             {
-                richTextBox1.Select(start + 3, length);
+                start += 3;
+                length -= 3;
             }
-            else
+            if (richTextBox1.Text.Substring(start + length - 3, 3) == "```") //Selected the asterix's as well?
             {
-                richTextBox1.Text = replace;
-                richTextBox1.Select(start - 3, length);
+                length -= 3;
             }
+
+            if (((GetStyles(start) & Style.Code) == Style.Code) && ((GetStyles(start + length) & Style.Code) == Style.Code)) //All inside an underline?
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "```");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 3, "```");
+                start += 3;
+            }
+            else if (((GetStyles(start) & Style.Code) == Style.Code) && !((GetStyles(start + length) & Style.Code) == Style.Code)) //First inside, but not second
+            {
+                //Make everything underlined
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var codeMatches = Regex.Matches(textselected, @"\`\`\`").Cast<Match>().ToList();
+                textselected = textselected.Replace("```", ""); //Remove all the code stuff inside the selection
+                textselected += "```"; //Add a closing tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in codeMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 3;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 3;
+                    }
+                }//Modify cursor pos
+                start += 3;
+                length -= 3;
+            }
+            else if (!((GetStyles(start) & Style.Code) == Style.Code) && ((GetStyles(start + length) & Style.Code) == Style.Code)) //First outside, second inside
+            {
+                //Make everything code
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var codeMatches = Regex.Matches(textselected, @"\`\`\`").Cast<Match>().ToList();
+                textselected = textselected.Replace("```", "");
+                textselected = "```" + textselected; //Add a opening tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in codeMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 3;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 3;
+                    }
+                } //Modify cursor pos
+                start += 3;
+            }
+            else //Neither are inside 
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "```");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 3, "```");
+                start += 3;
+            }
+
+            var doublecodes = Regex.Matches(richTextBox1.Text, @"\`\`\`\`\`\`").Cast<Match>().ToList();
+            int totalremoved = 0;
+            foreach (Match match in doublecodes)
+            {
+                if (match.Index <= start)
+                {
+                    start -= 6;
+                }
+                else if (match.Index >= start && match.Index < start + length)
+                {
+                    length -= 6;
+                }
+                richTextBox1.Text = richTextBox1.Text.Substring(0, match.Index - totalremoved) + richTextBox1.Text.Substring(match.Index + 6 - totalremoved);
+                totalremoved += 6;
+            }
+
+            richTextBox1.Select(start, length);
             richTextBox1.Focus();
         }
         private void UnderlineClicked(object sender, EventArgs e)
