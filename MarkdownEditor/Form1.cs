@@ -79,6 +79,8 @@ namespace MarkdownEditor
         }
         private void richTextBox1_SelectionChanged(object sender, EventArgs e)
         {
+            HFormatting(H0_button);
+
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
@@ -125,6 +127,15 @@ namespace MarkdownEditor
                         break;
                     case "strike":
                         FormattingClicked(Strikethrough_button, null);
+                        break;
+                    case "h1":
+                        HFormatting(H1_button);
+                        break;
+                    case "h2":
+                        HFormatting(H2_button);
+                        break;
+                    case "h3":
+                        HFormatting(H3_button);
                         break;
                 }
             }
@@ -1051,6 +1062,116 @@ namespace MarkdownEditor
                     }
                 }
             }
+        }
+
+        private void HeadingClicked(object sender, EventArgs e)
+        {
+            H0_button.Visible = true;
+            H1_button.Visible = true;
+            H2_button.Visible = true;
+            H3_button.Visible = true;
+            HeadingBackpanel.Visible = true;
+        }
+
+        private void H_button_Click(object sender, EventArgs e)
+        {
+            string number = HFormatting(sender);
+
+            //Actually adding the headings MD
+            int hashes = int.Parse(number.Substring(1));
+            string toadd = new string('#', hashes) + ' ';
+            if (hashes == 0)
+            {
+                toadd = "";
+            }
+
+            var start = richTextBox1.SelectionStart;
+            var length = richTextBox1.SelectionLength - (MoveToEndOfHeading(richTextBox1.Text, start) - start);
+
+            start = MoveToEndOfHeading(richTextBox1.Text, start);
+
+            if (length <= 0)
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, toadd);
+                return;
+            }
+            if (richTextBox1.Text[start + length - 1] == '\n')
+            {
+                length--;
+            }
+            if (richTextBox1.Text.Substring(start, length).Count(s => s == '\n') >= 1)
+            {
+                return;
+            }
+
+            if (richTextBox1.Text.Length >= 2 && start >= 1 && richTextBox1.Text[start] == ' ' && richTextBox1.Text[start - 1] == '#') //Selected heading bit
+            {
+                ++start; //Deselct it
+                --length;
+            }
+            if (start + length == richTextBox1.Text.Length || richTextBox1.Text[start + length + 1] == '\n') //Entire line highlighted?
+            {
+                if (start >= 2 && (richTextBox1.Text[start - 1] == ' ' && richTextBox1.Text[start - 2] == '#')) //Selected an entire heading? Modifying existing heading
+                {
+                    var lastline = richTextBox1.Text.LastIndexOf('\n', start); //Find where the \n is so that we can count the hashes
+                    richTextBox1.Text = richTextBox1.Text.Substring(0, lastline + 1) + toadd + richTextBox1.Text.Substring(start);
+                }
+                else
+                {
+                    richTextBox1.Text = richTextBox1.Text.Insert(start, toadd);
+                }
+            }
+        }
+
+        private string HFormatting(object sender)
+        {
+            H0_button.Visible = false;
+            H1_button.Visible = false;
+            H2_button.Visible = false;
+            H3_button.Visible = false;
+            HeadingBackpanel.Visible = false;
+
+            var button = ((Button)sender);
+            string number = button.Name.Split('_')[0];
+            HeadingLabel.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject(number);
+            switch (number)
+            {
+                case "H0":
+                    H0_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H0_select");
+                    H1_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H1_button");
+                    H2_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H2_button");
+                    H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_button");
+                    break;
+                case "H1":
+                    H0_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H0_button");
+                    H1_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H1_select");
+                    H2_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H2_button");
+                    H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_button");
+                    break;
+                case "H2":
+                    H0_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H0_button");
+                    H1_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H1_button");
+                    H2_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H2_select");
+                    H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_button");
+                    break;
+                case "H3":
+                    H0_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H0_button");
+                    H1_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H1_button");
+                    H2_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H2_button");
+                    H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_select");
+                    break;
+            }
+
+            return number;
+        }
+
+        public int MoveToEndOfHeading(string text, int start)
+        {
+            if (text[start] == '#') //In a heading?
+            {
+                return MoveToEndOfHeading(text, start+1);
+            }
+            return start;
         }
     }
 }
