@@ -101,12 +101,12 @@ namespace MarkdownEditor
             {
                 if (last == null)
                 {
-                    return;
+                    break;
                 }
                 last = last.ParentNode;
                 if (last == null)
                 {
-                    return;
+                    break;
                 }
                 switch (last.Name)
                 {
@@ -138,6 +138,19 @@ namespace MarkdownEditor
                         HFormatting(H3_button);
                         break;
                 }
+            }
+            toconvert = richTextBox1.Text;
+            toconvert = toconvert.Insert(start, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
+
+            customMarkdown = new CustomMarkdown(toconvert);
+            html = customMarkdown.GetHtml();
+            doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+            elementA = doc.GetElementbyId("startofselection");
+
+            if (elementA != null && elementA.PreviousSibling != null && elementA.PreviousSibling.Name == "p")
+            {
+                FormattingClicked(Font_button, null);
             }
         }
 
@@ -1197,7 +1210,7 @@ namespace MarkdownEditor
             FormattingClicked(sender, e);
             fontDialog1.ShowDialog();
             var font = fontDialog1.Font;
-            string toplace = "";
+            string toplace = "<div>";
             if (font.Underline)
             {
                 toplace += "<u>";
@@ -1223,6 +1236,7 @@ namespace MarkdownEditor
                 {
                     toplace += "</u>";
                 }
+                toplace += "</div>";
                 richTextBox1.Text = richTextBox1.Text.Insert(start, toplace);
 
                 start += toshift;
@@ -1240,6 +1254,7 @@ namespace MarkdownEditor
                 {
                     toplace += "</u>";
                 }
+                toplace += "</div>";
 
                 richTextBox1.Text = richTextBox1.Text.Substring(0, start) + toplace + richTextBox1.Text.Substring(start + length);
 
