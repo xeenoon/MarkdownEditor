@@ -155,25 +155,93 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            richTextBox1.Text = richTextBox1.Text.Insert(start, "**");
-            richTextBox1.Text = richTextBox1.Text.Insert(start+length+2, "**");
-            var replace = richTextBox1.Text.Replace("****", "");
-            if (richTextBox1.Text == replace)
+            if (richTextBox1.Text.Substring(start, 2) == "**") //Selected the asterix's as well?
             {
-                richTextBox1.Select(start+2, length);
+                start += 2;
+                length -= 2;
             }
-            else
+            if (richTextBox1.Text.Substring(start+length-2, 2) == "**") //Selected the asterix's as well?
             {
-                richTextBox1.Text = replace;
-                if (start != 0)
-                {
-                    richTextBox1.Select(start - 2, length);
-                }
-                else
-                {
-                    richTextBox1.Select(start, length);
-                }
+                length -= 2;
             }
+
+            if (((GetStyles(start) & Style.Bold) == Style.Bold) && ((GetStyles(start + length) & Style.Bold) == Style.Bold)) //All inside an underline?
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "**");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 2, "**");
+                start += 2;
+            }
+            else if (((GetStyles(start) & Style.Bold) == Style.Bold) && !((GetStyles(start + length) & Style.Bold) == Style.Bold)) //First inside, but not second
+            {
+                //Make everything underlined
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var boldMatches = Regex.Matches(textselected, @"\*\*").Cast<Match>().ToList();
+                textselected = textselected.Replace("**", ""); //Remove all the bold stuff inside the selection
+                textselected += "**"; //Add a closing tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in boldMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 2;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 2;
+                    }
+                }//Modify cursor pos
+                start += 2;
+                length -= 2;
+            }
+            else if (!((GetStyles(start) & Style.Bold) == Style.Bold) && ((GetStyles(start + length) & Style.Bold) == Style.Bold)) //First outside, second inside
+            {
+                //Make everything bold
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var boldMatches = Regex.Matches(textselected, @"\*\*").Cast<Match>().ToList();
+                textselected = textselected.Replace("**", "");
+                textselected = "**" + textselected; //Add a opening tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in boldMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 2;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 2;
+                    }
+                } //Modify cursor pos
+                start += 2;
+            }
+            else //Neither are inside 
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "**");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 2, "**");
+                start += 2;
+            }
+
+            var doublebolds = Regex.Matches(richTextBox1.Text, @"\*\*\*\*").Cast<Match>().ToList();
+            int totalremoved = 0;
+            foreach (Match match in doublebolds)
+            {
+                if (match.Index <= start)
+                {
+                    start -= 4;
+                }
+                else if (match.Index >= start && match.Index < start + length)
+                {
+                    length -= 4;
+                }
+                richTextBox1.Text = richTextBox1.Text.Substring(0, match.Index - totalremoved) + richTextBox1.Text.Substring(match.Index + 4 - totalremoved);
+                totalremoved += 4;
+            }
+
+            richTextBox1.Select(start, length);
             richTextBox1.Focus();
         }
 
