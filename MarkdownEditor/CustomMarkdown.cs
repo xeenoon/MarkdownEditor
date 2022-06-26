@@ -467,7 +467,7 @@ namespace MarkdownEditor
         }
         #endregion
         #region Links
-        public static string RemoveLinks(this string text)
+        public static string RemoveLinks(this string text, int beginat = 0)
         {
             if (text.Contains("https://"))
             {
@@ -485,7 +485,7 @@ namespace MarkdownEditor
                     }
                     else
                     {
-                        return text;
+                        goto embedlinks;
                     }
                 }
                 int endidx;
@@ -504,6 +504,34 @@ namespace MarkdownEditor
                 string before = text.Substring(0,startidx);
                 string after = text.Substring(endidx);
                 return RemoveLinks(before + html + after);
+            }
+            embedlinks:
+            if (text.Contains("[") && text.Contains("](") && text.Contains(")"))
+            {
+                int imageidx = text.IndexOf("[", beginat);
+                if (imageidx == -1)
+                {
+                    return text;
+                }
+                if (imageidx != 0 && text[imageidx-1]=='!')
+                {
+                    //Its an image
+                    return RemoveLinks(text, imageidx+2);
+                }
+                int nameEndIdx = text.IndexOf("](", imageidx);
+                string name = text.Substring(imageidx + 1, nameEndIdx - imageidx - 1);
+
+                int closingBracketIdx = text.IndexOf(")", nameEndIdx);
+                string imagelink = text.Substring(nameEndIdx + 2, closingBracketIdx - nameEndIdx - 2);
+                if (!imagelink.StartsWith("https"))
+                {
+                    imagelink = "https://" + imagelink;
+                }
+
+                string result = string.Format("<a href=\"{0}\">{1}</a>", imagelink, name);
+                string before = text.Substring(0, imageidx);
+                string after = text.Substring(closingBracketIdx + 1);
+                return RemoveImages(before + result + after);
             }
             return text;
         }

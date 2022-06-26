@@ -36,8 +36,9 @@ namespace MarkdownEditor
             this.HeadingLabel = new System.Windows.Forms.PictureBox();
             this.H3_button = new System.Windows.Forms.Button();
             this.H2_button = new System.Windows.Forms.Button();
-            this.H1_button = new System.Windows.Forms.Button();
             this.H0_button = new System.Windows.Forms.Button();
+            this.H1_button = new System.Windows.Forms.Button();
+            this.HeadingBackpanel = new System.Windows.Forms.Button();
             this.Heading_button = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.Underline_button = new System.Windows.Forms.Button();
@@ -50,7 +51,6 @@ namespace MarkdownEditor
             this.Code_button = new System.Windows.Forms.Button();
             this.Quote_button = new System.Windows.Forms.Button();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.HeadingBackpanel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -130,6 +130,19 @@ namespace MarkdownEditor
             this.H2_button.Visible = false;
             this.H2_button.Click += new System.EventHandler(this.H_button_Click);
             // 
+            // H0_button
+            // 
+            this.H0_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(135)))), ((int)(((byte)(144)))));
+            this.H0_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.H0_button;
+            this.H0_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.H0_button.Location = new System.Drawing.Point(254, 35);
+            this.H0_button.Name = "H0_button";
+            this.H0_button.Size = new System.Drawing.Size(40, 33);
+            this.H0_button.TabIndex = 2;
+            this.H0_button.UseVisualStyleBackColor = false;
+            this.H0_button.Visible = false;
+            this.H0_button.Click += new System.EventHandler(this.H_button_Click);
+            // 
             // H1_button
             // 
             this.H1_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(135)))), ((int)(((byte)(144)))));
@@ -143,18 +156,16 @@ namespace MarkdownEditor
             this.H1_button.Visible = false;
             this.H1_button.Click += new System.EventHandler(this.H_button_Click);
             // 
-            // H0_button
+            // HeadingBackpanel
             // 
-            this.H0_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(135)))), ((int)(((byte)(144)))));
-            this.H0_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.H0_button;
-            this.H0_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.H0_button.Location = new System.Drawing.Point(254, 35);
-            this.H0_button.Name = "H0_button";
-            this.H0_button.Size = new System.Drawing.Size(40, 33);
-            this.H0_button.TabIndex = 2;
-            this.H0_button.UseVisualStyleBackColor = false;
-            this.H0_button.Visible = false;
-            this.H0_button.Click += new System.EventHandler(this.H_button_Click);
+            this.HeadingBackpanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("HeadingBackpanel.BackgroundImage")));
+            this.HeadingBackpanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.HeadingBackpanel.Location = new System.Drawing.Point(249, 9);
+            this.HeadingBackpanel.Name = "HeadingBackpanel";
+            this.HeadingBackpanel.Size = new System.Drawing.Size(50, 167);
+            this.HeadingBackpanel.TabIndex = 12;
+            this.HeadingBackpanel.TabStop = false;
+            this.HeadingBackpanel.Visible = false;
             // 
             // Heading_button
             // 
@@ -233,7 +244,7 @@ namespace MarkdownEditor
             this.Link_button.Size = new System.Drawing.Size(33, 30);
             this.Link_button.TabIndex = 9;
             this.Link_button.TabStop = false;
-            this.Link_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Link_button.Click += new System.EventHandler(this.Link_button_Click);
             // 
             // Italics_button
             // 
@@ -255,7 +266,7 @@ namespace MarkdownEditor
             this.Image_button.Size = new System.Drawing.Size(35, 30);
             this.Image_button.TabIndex = 8;
             this.Image_button.TabStop = false;
-            this.Image_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Image_button.Click += new System.EventHandler(this.Image_button_Click);
             // 
             // Code_button
             // 
@@ -290,17 +301,6 @@ namespace MarkdownEditor
             this.webBrowser1.Url = new System.Uri("http://6", System.UriKind.Absolute);
             this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
             this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
-            // 
-            // HeadingBackpanel
-            // 
-            this.HeadingBackpanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("HeadingBackpanel.BackgroundImage")));
-            this.HeadingBackpanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.HeadingBackpanel.Location = new System.Drawing.Point(249, 9);
-            this.HeadingBackpanel.Name = "HeadingBackpanel";
-            this.HeadingBackpanel.Size = new System.Drawing.Size(50, 167);
-            this.HeadingBackpanel.TabIndex = 12;
-            this.HeadingBackpanel.TabStop = false;
-            this.HeadingBackpanel.Visible = false;
             // 
             // Form1
             // 

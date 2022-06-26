@@ -1173,5 +1173,23 @@ namespace MarkdownEditor
             }
             return start;
         }
+
+        private void Image_button_Click(object sender, EventArgs e)
+        {
+            var start = richTextBox1.SelectionStart;
+            richTextBox1.Text = richTextBox1.Text.Insert(start, "\n![caption](address)\n");
+            start+=12;
+            richTextBox1.Select(start, 7);
+            richTextBox1.Focus();
+        }
+
+        private void Link_button_Click(object sender, EventArgs e)
+        {
+            var start = richTextBox1.SelectionStart;
+            richTextBox1.Text = richTextBox1.Text.Insert(start, "\n[text](link)\n");
+            start += 8;
+            richTextBox1.Select(start, 4);
+            richTextBox1.Focus();
+        }
     }
 }
