@@ -155,25 +155,93 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            richTextBox1.Text = richTextBox1.Text.Insert(start, "**");
-            richTextBox1.Text = richTextBox1.Text.Insert(start+length+2, "**");
-            var replace = richTextBox1.Text.Replace("****", "");
-            if (richTextBox1.Text == replace)
+            if (richTextBox1.Text.Substring(start, 2) == "**") //Selected the asterix's as well?
             {
-                richTextBox1.Select(start+2, length);
+                start += 2;
+                length -= 2;
             }
-            else
+            if (richTextBox1.Text.Substring(start+length-2, 2) == "**") //Selected the asterix's as well?
             {
-                richTextBox1.Text = replace;
-                if (start != 0)
-                {
-                    richTextBox1.Select(start - 2, length);
-                }
-                else
-                {
-                    richTextBox1.Select(start, length);
-                }
+                length -= 2;
             }
+
+            if (((GetStyles(start) & Style.Strikethrough) == Style.Strikethrough) && ((GetStyles(start + length) & Style.Strikethrough) == Style.Strikethrough)) //All inside an underline?
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "**");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 2, "**");
+                start += 2;
+            }
+            else if (((GetStyles(start) & Style.Strikethrough) == Style.Strikethrough) && !((GetStyles(start + length) & Style.Strikethrough) == Style.Strikethrough)) //First inside, but not second
+            {
+                //Make everything underlined
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var boldMatches = Regex.Matches(textselected, @"\*\*").Cast<Match>().ToList();
+                textselected = textselected.Replace("**", ""); //Remove all the bold stuff inside the selection
+                textselected += "**"; //Add a closing tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in boldMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 2;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 2;
+                    }
+                }//Modify cursor pos
+                start += 2;
+                length -= 2;
+            }
+            else if (!((GetStyles(start) & Style.Strikethrough) == Style.Strikethrough) && ((GetStyles(start + length) & Style.Strikethrough) == Style.Strikethrough)) //First outside, second inside
+            {
+                //Make everything bold
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var boldMatches = Regex.Matches(textselected, @"\*\*").Cast<Match>().ToList();
+                textselected = textselected.Replace("**", "");
+                textselected = "**" + textselected; //Add a opening tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in boldMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 2;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 2;
+                    }
+                } //Modify cursor pos
+                start += 2;
+            }
+            else //Neither are inside 
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "**");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 2, "**");
+                start += 2;
+            }
+
+            var doublebolds = Regex.Matches(richTextBox1.Text, @"\*\*\*\*").Cast<Match>().ToList();
+            int totalremoved = 0;
+            foreach (Match match in doublebolds)
+            {
+                if (match.Index <= start)
+                {
+                    start -= 4;
+                }
+                else if (match.Index >= start && match.Index < start + length)
+                {
+                    length -= 4;
+                }
+                richTextBox1.Text = richTextBox1.Text.Substring(0, match.Index - totalremoved) + richTextBox1.Text.Substring(match.Index + 4 - totalremoved);
+                totalremoved += 4;
+            }
+
+            richTextBox1.Select(start, length);
             richTextBox1.Focus();
         }
 
@@ -197,8 +265,21 @@ namespace MarkdownEditor
             int add = 0;
             if (start == 0 || richTextBox1.Text[start-1] != '*' || (start >=2 && richTextBox1.Text[start-2] == '*')) //Cannot already be italics, but can be bold
             {
-                richTextBox1.Text = richTextBox1.Text.Insert(start, "*");
-                add = 1;
+                if (((GetStyles(start) & Style.Italics) == Style.Italics) && ((GetStyles(start + length) & Style.Italics) != Style.Italics)) //Is the start already in italics, and the end ISN'T?
+                {
+                    //Dont bother
+                    ++start;
+                    add--;
+                }
+                else if (((GetStyles(start) & Style.Italics) != Style.Italics) && ((GetStyles(start + length) & Style.Italics) == Style.Italics)) //Is the start NOT in italics, and the end is?
+                {
+                    add = 1;
+                }
+                else
+                {
+                    richTextBox1.Text = richTextBox1.Text.Insert(start, "*");
+                    add = 1;
+                }
             }
             else //It is already italics
             {
@@ -208,7 +289,14 @@ namespace MarkdownEditor
             int endidx = start + length + add;
             if (endidx == richTextBox1.Text.Length || richTextBox1.Text[endidx] != '*' || (endidx <= richTextBox1.Text.Length-2 && richTextBox1.Text[endidx+1] == '*')) //Cannot be italics, but can be bold
             {
-                richTextBox1.Text = richTextBox1.Text.Insert(endidx, "*");
+                if (((GetStyles(start) & Style.Italics) != Style.Italics) && ((GetStyles(start + length) & Style.Italics) == Style.Italics)) //Is the start NOT in italics, and the end is?
+                {
+                    richTextBox1.Text = richTextBox1.Text.Insert(start, "*");
+                }
+                else
+                {
+                    richTextBox1.Text = richTextBox1.Text.Insert(endidx, "*");
+                }
             }
             else
             {
@@ -231,6 +319,15 @@ namespace MarkdownEditor
                 richTextBox1.Text = replace;
                 richTextBox1.Select(start, length);
             }
+            var selectedtext = richTextBox1.Text.Substring(start, length);
+            selectedtext = selectedtext.Replace("**", "PLACEHOLDER_FOR_BOLD_TEXT_THINGY_LOTS_MORE_TEXT_THAT_THE_USER_WILL_HOPEFULLY_NEVER_TYPE");
+            selectedtext = selectedtext.Replace("*", "");
+            selectedtext = selectedtext.Replace("PLACEHOLDER_FOR_BOLD_TEXT_THINGY_LOTS_MORE_TEXT_THAT_THE_USER_WILL_HOPEFULLY_NEVER_TYPE", "**");
+            richTextBox1.Text = richTextBox1.Text.Substring(0,start) + selectedtext + richTextBox1.Text.Substring(start+length);
+            
+            length = selectedtext.Length;
+            richTextBox1.Select(start, length);
+
             richTextBox1.Focus();
         }
         private void StrikeClicked(object sender, EventArgs e)
@@ -239,18 +336,93 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            richTextBox1.Text = richTextBox1.Text.Insert(start, "~~");
-            richTextBox1.Text = richTextBox1.Text.Insert(start + length + 2, "~~");
-            var replace = richTextBox1.Text.Replace("~~~~", "");
-            if (richTextBox1.Text == replace)
+            if (richTextBox1.Text.Substring(start, 2) == "~~") //Selected the asterix's as well?
             {
-                richTextBox1.Select(start + 2, length);
+                start += 2;
+                length -= 2;
             }
-            else
+            if (richTextBox1.Text.Substring(start + length - 2, 2) == "~~") //Selected the asterix's as well?
             {
-                richTextBox1.Text = replace;
-                richTextBox1.Select(start - 2, length);
+                length -= 2;
             }
+
+            if (((GetStyles(start) & Style.Strikethrough) == Style.Strikethrough) && ((GetStyles(start + length) & Style.Strikethrough) == Style.Strikethrough)) //All inside an underline?
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "~~");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 2, "~~");
+                start += 2;
+            }
+            else if (((GetStyles(start) & Style.Strikethrough) == Style.Strikethrough) && !((GetStyles(start + length) & Style.Strikethrough) == Style.Strikethrough)) //First inside, but not second
+            {
+                //Make everything underlined
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var strikeMatches = Regex.Matches(textselected, @"\~\~").Cast<Match>().ToList();
+                textselected = textselected.Replace("~~", ""); //Remove all the strike stuff inside the selection
+                textselected += "~~"; //Add a closing tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in strikeMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 2;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 2;
+                    }
+                }//Modify cursor pos
+                start += 2;
+                length -= 2;
+            }
+            else if (!((GetStyles(start) & Style.Strikethrough) == Style.Strikethrough) && ((GetStyles(start + length) & Style.Strikethrough) == Style.Strikethrough)) //First outside, second inside
+            {
+                //Make everything strike
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var strikeMatches = Regex.Matches(textselected, @"\~\~").Cast<Match>().ToList();
+                textselected = textselected.Replace("~~", "");
+                textselected = "~~" + textselected; //Add a opening tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in strikeMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 2;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 2;
+                    }
+                } //Modify cursor pos
+                start += 2;
+            }
+            else //Neither are inside 
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "~~");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 2, "~~");
+                start += 2;
+            }
+
+            var doublestrikes = Regex.Matches(richTextBox1.Text, @"\~\~\~\~").Cast<Match>().ToList();
+            int totalremoved = 0;
+            foreach (Match match in doublestrikes)
+            {
+                if (match.Index <= start)
+                {
+                    start -= 4;
+                }
+                else if (match.Index >= start && match.Index < start + length)
+                {
+                    length -= 4;
+                }
+                richTextBox1.Text = richTextBox1.Text.Substring(0, match.Index - totalremoved) + richTextBox1.Text.Substring(match.Index + 4 - totalremoved);
+                totalremoved += 4;
+            }
+
+            richTextBox1.Select(start, length);
             richTextBox1.Focus();
         }
         private void CodeClicked(object sender, EventArgs e)
@@ -259,18 +431,93 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            richTextBox1.Text = richTextBox1.Text.Insert(start, "```");
-            richTextBox1.Text = richTextBox1.Text.Insert(start + length + 3, "```");
-            var replace = richTextBox1.Text.Replace("``````", "");
-            if (richTextBox1.Text == replace)
+            if (richTextBox1.Text.Substring(start, 3) == "```") //Selected the asterix's as well?
             {
-                richTextBox1.Select(start + 3, length);
+                start += 3;
+                length -= 3;
             }
-            else
+            if (richTextBox1.Text.Substring(start + length - 3, 3) == "```") //Selected the asterix's as well?
             {
-                richTextBox1.Text = replace;
-                richTextBox1.Select(start - 3, length);
+                length -= 3;
             }
+
+            if (((GetStyles(start) & Style.Code) == Style.Code) && ((GetStyles(start + length) & Style.Code) == Style.Code)) //All inside an underline?
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "```");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 3, "```");
+                start += 3;
+            }
+            else if (((GetStyles(start) & Style.Code) == Style.Code) && !((GetStyles(start + length) & Style.Code) == Style.Code)) //First inside, but not second
+            {
+                //Make everything underlined
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var codeMatches = Regex.Matches(textselected, @"\`\`\`").Cast<Match>().ToList();
+                textselected = textselected.Replace("```", ""); //Remove all the code stuff inside the selection
+                textselected += "```"; //Add a closing tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in codeMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 3;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 3;
+                    }
+                }//Modify cursor pos
+                start += 3;
+                length -= 3;
+            }
+            else if (!((GetStyles(start) & Style.Code) == Style.Code) && ((GetStyles(start + length) & Style.Code) == Style.Code)) //First outside, second inside
+            {
+                //Make everything code
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var codeMatches = Regex.Matches(textselected, @"\`\`\`").Cast<Match>().ToList();
+                textselected = textselected.Replace("```", "");
+                textselected = "```" + textselected; //Add a opening tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in codeMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 3;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 3;
+                    }
+                } //Modify cursor pos
+                start += 3;
+            }
+            else //Neither are inside 
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, "```");
+                richTextBox1.Text = richTextBox1.Text.Insert(start + length + 3, "```");
+                start += 3;
+            }
+
+            var doublecodes = Regex.Matches(richTextBox1.Text, @"\`\`\`\`\`\`").Cast<Match>().ToList();
+            int totalremoved = 0;
+            foreach (Match match in doublecodes)
+            {
+                if (match.Index <= start)
+                {
+                    start -= 6;
+                }
+                else if (match.Index >= start && match.Index < start + length)
+                {
+                    length -= 6;
+                }
+                richTextBox1.Text = richTextBox1.Text.Substring(0, match.Index - totalremoved) + richTextBox1.Text.Substring(match.Index + 6 - totalremoved);
+                totalremoved += 6;
+            }
+
+            richTextBox1.Select(start, length);
             richTextBox1.Focus();
         }
         private void UnderlineClicked(object sender, EventArgs e)
@@ -530,7 +777,14 @@ namespace MarkdownEditor
             Style result = Style.None;
 
             string toconvert = richTextBox1.Text;
-            toconvert = toconvert.Insert(start, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
+            try
+            {
+                toconvert = toconvert.Insert(start, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
+            }
+            catch
+            {
+                return Style.None;
+            }
             //toconvert = toconvert.Insert(start + length + 36, "<div id=\"endofselection\"></div>"); //End the div
 
             CustomMarkdown customMarkdown = new CustomMarkdown(toconvert);
@@ -558,7 +812,7 @@ namespace MarkdownEditor
                         result |= Style.Italics;
                         break;
                     case "b":
-                        result |= Style.Bold;
+                        result |= Style.Strikethrough;
                         break;
                     case "blockquote":
                         result |= Style.Quote;
