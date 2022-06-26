@@ -99,7 +99,7 @@ namespace MarkdownEditor
             this.Underline_button.Size = new System.Drawing.Size(30, 30);
             this.Underline_button.TabIndex = 11;
             this.Underline_button.TabStop = false;
-            this.Underline_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Underline_button.Click += new System.EventHandler(this.UnderlineClicked);
             // 
             // Font_button
             // 
@@ -189,7 +189,7 @@ namespace MarkdownEditor
             this.Strikethrough_button.Size = new System.Drawing.Size(30, 30);
             this.Strikethrough_button.TabIndex = 2;
             this.Strikethrough_button.TabStop = false;
-            this.Strikethrough_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Strikethrough_button.Click += new System.EventHandler(this.StrikeClicked);
             // 
             // richTextBox1
             // 

@@ -48,6 +48,50 @@ namespace MarkdownEditor
             }
             return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
         }
+        public static string ReplaceLast(this string text, string search, string replace)
+        {
+            int pos = text.LastIndexOf(search);
+            if (pos < 0)
+            {
+                return text;
+            }
+            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+        }
+        public static int ClosingTag(this string text, string tag, int idx)
+        {
+            string closingtag = string.Format("</{0}>", tag.Substring(1, tag.Length-2));
+            var openings = Regex.Matches(text, tag).Cast<Match>().ToList().Where(m=>m.Index > idx);
+            var closings = Regex.Matches(text, closingtag).Cast<Match>().ToList().Where(m => m.Index > idx);
+
+            Dictionary<int, bool> tagidxs = new Dictionary<int, bool>(); ;
+            foreach (var opening in openings)
+            {
+                tagidxs.Add(opening.Index, true);
+            }
+            foreach (var closing in closings)
+            {
+                tagidxs.Add(closing.Index, false);
+            }
+
+            int totalopenings = 1;
+            int totalclosings = 0;
+            foreach (var item in tagidxs.OrderBy(t=>t.Key)) //Order all the tags by the order they appear in the string
+            {
+                if (item.Value == true) //Is it an opening
+                {
+                    ++totalopenings;
+                }
+                else
+                {
+                    ++totalclosings;
+                }
+                if (totalopenings == totalclosings)
+                {
+                    return item.Key; //Return the final closing one
+                }
+            }
+            return text.Length-1; //No closing one found
+        }
 
         #region Asterix
         public static string RemoveAsterixs(this string processString)
