@@ -174,5 +174,44 @@
   <ItemGroup>
     <None Include="Resources\Background.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H1_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H2_button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H2_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H3_button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H3_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H0_button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H0_select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H1_button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\H1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HeadingDropdown.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

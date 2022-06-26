@@ -1052,5 +1052,54 @@ namespace MarkdownEditor
                 }
             }
         }
+
+        private void HeadingClicked(object sender, EventArgs e)
+        {
+            H0_button.Visible = true;
+            H1_button.Visible = true;
+            H2_button.Visible = true;
+            H3_button.Visible = true;
+            HeadingBackpanel.Visible = true;
+        }
+
+        private void H_button_Click(object sender, EventArgs e)
+        {                            
+            H0_button.Visible        = false;
+            H1_button.Visible        = false;
+            H2_button.Visible        = false;
+            H3_button.Visible        = false;
+            HeadingBackpanel.Visible = false;
+
+            var button = ((Button)sender);
+            string number = button.Name.Split('_')[0];
+            HeadingLabel.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject(number);
+            switch (number)
+            {
+                case "H0":
+                    H0_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H0_select");
+                    H1_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H1_button");
+                    H2_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H2_button");
+                    H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_button");
+                    break;
+                case "H1":
+                    H0_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H0_button");
+                    H1_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H1_select");
+                    H2_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H2_button");
+                    H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_button");
+                    break;
+                case "H2":
+                    H0_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H0_button");
+                    H1_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H1_button");
+                    H2_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H2_select");
+                    H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_button");
+                    break;
+                case "H3":
+                    H0_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H0_button");
+                    H1_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H1_button");
+                    H2_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H2_button");
+                    H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_select");
+                    break;
+            }
+        }
     }
 }
