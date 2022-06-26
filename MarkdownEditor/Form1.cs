@@ -1319,5 +1319,14 @@ namespace MarkdownEditor
             }
             return null;
         }
+
+        private void HeadingBackpanel_Click(object sender, EventArgs e)
+        {
+            H0_button.Visible = false;
+            H1_button.Visible = false;
+            H2_button.Visible = false;
+            H3_button.Visible = false;
+            HeadingBackpanel.Visible = false;
+        }
     }
 }

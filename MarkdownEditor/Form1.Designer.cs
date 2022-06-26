@@ -167,6 +167,7 @@ namespace MarkdownEditor
             this.HeadingBackpanel.TabIndex = 12;
             this.HeadingBackpanel.TabStop = false;
             this.HeadingBackpanel.Visible = false;
+            this.HeadingBackpanel.Click += new System.EventHandler(this.HeadingBackpanel_Click);
             // 
             // Heading_button
             // 
