@@ -42,7 +42,8 @@ namespace MarkdownEditor
         {
             var md = richTextBox1.Text;
             CustomMarkdown customMarkdown = new CustomMarkdown(md);
-            webBrowser1.DocumentText = customMarkdown.GetHtml();
+            string v = customMarkdown.GetHtml();
+            webBrowser1.DocumentText = v;
         }
 
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)

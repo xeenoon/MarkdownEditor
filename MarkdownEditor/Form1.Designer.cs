@@ -76,11 +76,11 @@ namespace MarkdownEditor
             this.backgroundPanel.BackColor = System.Drawing.Color.LightGray;
             this.backgroundPanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("backgroundPanel.BackgroundImage")));
             this.backgroundPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.backgroundPanel.Controls.Add(this.Heading_button);
             this.backgroundPanel.Controls.Add(this.Underline_button);
             this.backgroundPanel.Controls.Add(this.Font_button);
             this.backgroundPanel.Controls.Add(this.Link_button);
             this.backgroundPanel.Controls.Add(this.Image_button);
-            this.backgroundPanel.Controls.Add(this.Heading_button);
             this.backgroundPanel.Controls.Add(this.Quote_button);
             this.backgroundPanel.Controls.Add(this.Code_button);
             this.backgroundPanel.Controls.Add(this.Italics_button);
