@@ -117,20 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="backgroundPanel.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAASoAAAB6CAYAAAAIwx5sAAAABGdBTUEAALGPC/xhBQAAAbBJREFUeF7t
-        1DENwEAQwLCj9VA6lT+K+07FkMGRTCHztQBxs+d5AZKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owK
-        yDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8
-        owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMq
-        IM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLy
-        jArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+o
-        gDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArI
-        Myogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogLx/
-        VABdsxfKBySttEBwOAAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value># Cool cat rainbow thingy
 
@@ -158,6 +144,20 @@
 &lt;button style="margin: 0 90; background:red; color=white;" title="Button of death"&gt;**Click me and you die**&lt;/button&gt;
 
 https://google.com
+</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="backgroundPanel.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAASoAAAB6CAYAAAAIwx5sAAAABGdBTUEAALGPC/xhBQAAAbBJREFUeF7t
+        1DENwEAQwLCj9VA6lT+K+07FkMGRTCHztQBxs+d5AZKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owK
+        yDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8
+        owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMq
+        IM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLy
+        jArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+o
+        gDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArI
+        Myogz6iAPKMC8owKyDMqIM+ogDyjAvKMCsgzKiDPqIA8owLyjArIMyogz6iAPKMC8owKyDMqIM+ogLx/
+        VABdsxfKBySttEBwOAAAAABJRU5ErkJggg==
 </value>
   </data>
 </root>

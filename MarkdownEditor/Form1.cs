@@ -164,6 +164,9 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
+            start = MoveOutsideTag(richTextBox1.Text, start);
+            length = MoveOutsideTag(richTextBox1.Text, start + length) - start;
+
             if (length == 0)
             {
                 return;
@@ -365,7 +368,10 @@ namespace MarkdownEditor
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
-            
+
+            start = MoveOutsideTag(richTextBox1.Text, start);
+            length = MoveOutsideTag(richTextBox1.Text, start + length) - start;
+
             if (length == 0)
             {
                 return;
@@ -471,6 +477,9 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
+            start = MoveOutsideTag(richTextBox1.Text, start);
+            length = MoveOutsideTag(richTextBox1.Text, start + length) - start;
+
             if (length == 0)
             {
                 return;
@@ -574,7 +583,8 @@ namespace MarkdownEditor
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
-
+            start = MoveOutsideTag(richTextBox1.Text, start);
+            length = MoveOutsideTag(richTextBox1.Text, start+length)-start;
             if (length == 0)
             {
                 return;
@@ -960,6 +970,50 @@ namespace MarkdownEditor
             }
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
+        }
+
+        private int MoveOutsideTag(string text, int start)
+        {
+            bool insideHtml = false;
+            bool inside_MD = false;
+
+            for (int i = 0; i < start; ++i)
+            {
+                var c = text[i];
+                if (c == '<') //Beggining inside tag
+                {
+                    insideHtml = true;
+                }
+                if (c=='>')
+                {
+                    insideHtml = false;
+                }
+                if (c=='*' && i <= text.Length-2 && text[i + 1] == '*') //Asterix after
+                {
+                    inside_MD = true;
+                }
+                else if (c == '~' && i <= text.Length - 2 && text[i + 1] == '~') //Asterix after
+                {
+                    inside_MD = true;
+                }
+                else if (c == '`' && i <= text.Length - 2 && text[i + 1] == '`') //Asterix after
+                {
+                    inside_MD = true;
+                }
+                else
+                {
+                    inside_MD = false;
+                }
+            }
+            if (insideHtml)
+            {
+                return MoveOutsideTag(text, start-1); //Keep going until we are outside
+            }
+            if (inside_MD)
+            {
+                return MoveOutsideTag(text, start + 1);
+            }
+            return start;
         }
 
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
