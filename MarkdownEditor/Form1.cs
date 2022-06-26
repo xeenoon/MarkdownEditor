@@ -1100,6 +1100,59 @@ namespace MarkdownEditor
                     H3_button.BackgroundImage = (Image)Properties.Resources.ResourceManager.GetObject("H3_select");
                     break;
             }
+
+            //Actually adding the headings MD
+            int hashes = int.Parse(number.Substring(1));
+            string toadd = new string('#', hashes) + ' ';
+            if (hashes == 0)
+            {
+                toadd = "";
+            }
+
+            var start = richTextBox1.SelectionStart;
+            var length = richTextBox1.SelectionLength - (MoveToEndOfHeading(richTextBox1.Text, start) - start);
+
+            start = MoveToEndOfHeading(richTextBox1.Text, start);
+
+            if (length == 0)
+            {
+                richTextBox1.Text = richTextBox1.Text.Insert(start, toadd);
+                return;
+            }
+            if (richTextBox1.Text[start + length - 1] == '\n')
+            {
+                length--;
+            }
+            if (richTextBox1.Text.Substring(start, length).Count(s=>s=='\n') >= 1)
+            {
+                return;
+            }
+
+            if (richTextBox1.Text.Length >= 2 && start >= 1 && richTextBox1.Text[start] == ' ' && richTextBox1.Text[start-1] == '#') //Selected heading bit
+            {
+                ++start; //Deselct it
+                --length;
+            }
+            if (start + length == richTextBox1.Text.Length || richTextBox1.Text[start+length+1] == '\n') //Entire line highlighted?
+            {
+                if (start >= 2 && (richTextBox1.Text[start - 1] == ' ' && richTextBox1.Text[start - 2] == '#')) //Selected an entire heading? Modifying existing heading
+                {
+                    var lastline = richTextBox1.Text.LastIndexOf('\n', start); //Find where the \n is so that we can count the hashes
+                    richTextBox1.Text = richTextBox1.Text.Substring(0,lastline+1) + toadd + richTextBox1.Text.Substring(start);
+                }
+                else
+                {
+                    richTextBox1.Text = richTextBox1.Text.Insert(start, toadd);
+                }
+            }
+        }
+        public int MoveToEndOfHeading(string text, int start)
+        {
+            if (text[start] == '#') //In a heading?
+            {
+                return MoveToEndOfHeading(text, start+1);
+            }
+            return start;
         }
     }
 }
