@@ -33,7 +33,6 @@ namespace MarkdownEditor
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.backgroundPanel = new System.Windows.Forms.Panel();
             this.Heading_button = new System.Windows.Forms.Button();
             this.Underline_button = new System.Windows.Forms.Button();
             this.Font_button = new System.Windows.Forms.Button();
@@ -50,7 +49,6 @@ namespace MarkdownEditor
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.backgroundPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -61,8 +59,19 @@ namespace MarkdownEditor
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.backgroundPanel);
+            this.splitContainer1.Panel1.BackgroundImage = global::MarkdownEditor.Properties.Resources.Background;
+            this.splitContainer1.Panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.splitContainer1.Panel1.Controls.Add(this.Heading_button);
             this.splitContainer1.Panel1.Controls.Add(this.richTextBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.Underline_button);
+            this.splitContainer1.Panel1.Controls.Add(this.Bold_button);
+            this.splitContainer1.Panel1.Controls.Add(this.Font_button);
+            this.splitContainer1.Panel1.Controls.Add(this.Strikethrough_button);
+            this.splitContainer1.Panel1.Controls.Add(this.Link_button);
+            this.splitContainer1.Panel1.Controls.Add(this.Italics_button);
+            this.splitContainer1.Panel1.Controls.Add(this.Image_button);
+            this.splitContainer1.Panel1.Controls.Add(this.Code_button);
+            this.splitContainer1.Panel1.Controls.Add(this.Quote_button);
             // 
             // splitContainer1.Panel2
             // 
@@ -71,31 +80,11 @@ namespace MarkdownEditor
             this.splitContainer1.SplitterDistance = 384;
             this.splitContainer1.TabIndex = 0;
             // 
-            // backgroundPanel
-            // 
-            this.backgroundPanel.BackColor = System.Drawing.Color.LightGray;
-            this.backgroundPanel.BackgroundImage = global::MarkdownEditor.Properties.Resources.Background;
-            this.backgroundPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.backgroundPanel.Controls.Add(this.Heading_button);
-            this.backgroundPanel.Controls.Add(this.Underline_button);
-            this.backgroundPanel.Controls.Add(this.Font_button);
-            this.backgroundPanel.Controls.Add(this.Link_button);
-            this.backgroundPanel.Controls.Add(this.Image_button);
-            this.backgroundPanel.Controls.Add(this.Quote_button);
-            this.backgroundPanel.Controls.Add(this.Code_button);
-            this.backgroundPanel.Controls.Add(this.Italics_button);
-            this.backgroundPanel.Controls.Add(this.Bold_button);
-            this.backgroundPanel.Controls.Add(this.Strikethrough_button);
-            this.backgroundPanel.Location = new System.Drawing.Point(3, 0);
-            this.backgroundPanel.Name = "backgroundPanel";
-            this.backgroundPanel.Size = new System.Drawing.Size(378, 48);
-            this.backgroundPanel.TabIndex = 1;
-            // 
             // Heading_button
             // 
             this.Heading_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Heading;
             this.Heading_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Heading_button.Location = new System.Drawing.Point(247, 9);
+            this.Heading_button.Location = new System.Drawing.Point(250, 9);
             this.Heading_button.Name = "Heading_button";
             this.Heading_button.Size = new System.Drawing.Size(50, 30);
             this.Heading_button.TabIndex = 7;
@@ -106,7 +95,7 @@ namespace MarkdownEditor
             // 
             this.Underline_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Underline;
             this.Underline_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Underline_button.Location = new System.Drawing.Point(107, 9);
+            this.Underline_button.Location = new System.Drawing.Point(110, 9);
             this.Underline_button.Name = "Underline_button";
             this.Underline_button.Size = new System.Drawing.Size(30, 30);
             this.Underline_button.TabIndex = 11;
@@ -117,7 +106,7 @@ namespace MarkdownEditor
             // 
             this.Font_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Font;
             this.Font_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Font_button.Location = new System.Drawing.Point(212, 9);
+            this.Font_button.Location = new System.Drawing.Point(215, 9);
             this.Font_button.Name = "Font_button";
             this.Font_button.Size = new System.Drawing.Size(30, 30);
             this.Font_button.TabIndex = 10;
@@ -128,7 +117,7 @@ namespace MarkdownEditor
             // 
             this.Link_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Link;
             this.Link_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Link_button.Location = new System.Drawing.Point(342, 9);
+            this.Link_button.Location = new System.Drawing.Point(345, 9);
             this.Link_button.Name = "Link_button";
             this.Link_button.Size = new System.Drawing.Size(33, 30);
             this.Link_button.TabIndex = 9;
@@ -139,7 +128,7 @@ namespace MarkdownEditor
             // 
             this.Image_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Image;
             this.Image_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Image_button.Location = new System.Drawing.Point(302, 9);
+            this.Image_button.Location = new System.Drawing.Point(305, 9);
             this.Image_button.Name = "Image_button";
             this.Image_button.Size = new System.Drawing.Size(35, 30);
             this.Image_button.TabIndex = 8;
@@ -150,7 +139,7 @@ namespace MarkdownEditor
             // 
             this.Quote_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Quote;
             this.Quote_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Quote_button.Location = new System.Drawing.Point(177, 9);
+            this.Quote_button.Location = new System.Drawing.Point(180, 9);
             this.Quote_button.Name = "Quote_button";
             this.Quote_button.Size = new System.Drawing.Size(30, 30);
             this.Quote_button.TabIndex = 6;
@@ -161,7 +150,7 @@ namespace MarkdownEditor
             // 
             this.Code_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Code;
             this.Code_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Code_button.Location = new System.Drawing.Point(142, 9);
+            this.Code_button.Location = new System.Drawing.Point(145, 9);
             this.Code_button.Name = "Code_button";
             this.Code_button.Size = new System.Drawing.Size(30, 30);
             this.Code_button.TabIndex = 5;
@@ -172,7 +161,7 @@ namespace MarkdownEditor
             // 
             this.Italics_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Italics;
             this.Italics_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Italics_button.Location = new System.Drawing.Point(72, 9);
+            this.Italics_button.Location = new System.Drawing.Point(75, 9);
             this.Italics_button.Name = "Italics_button";
             this.Italics_button.Size = new System.Drawing.Size(30, 30);
             this.Italics_button.TabIndex = 4;
@@ -183,7 +172,7 @@ namespace MarkdownEditor
             // 
             this.Bold_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Bold;
             this.Bold_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Bold_button.Location = new System.Drawing.Point(37, 9);
+            this.Bold_button.Location = new System.Drawing.Point(40, 9);
             this.Bold_button.Name = "Bold_button";
             this.Bold_button.Size = new System.Drawing.Size(30, 30);
             this.Bold_button.TabIndex = 3;
@@ -194,7 +183,7 @@ namespace MarkdownEditor
             // 
             this.Strikethrough_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Strikethrough;
             this.Strikethrough_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Strikethrough_button.Location = new System.Drawing.Point(2, 9);
+            this.Strikethrough_button.Location = new System.Drawing.Point(5, 9);
             this.Strikethrough_button.Name = "Strikethrough_button";
             this.Strikethrough_button.Size = new System.Drawing.Size(30, 30);
             this.Strikethrough_button.TabIndex = 2;
@@ -237,7 +226,6 @@ namespace MarkdownEditor
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.backgroundPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -247,7 +235,6 @@ namespace MarkdownEditor
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.Panel backgroundPanel;
         private System.Windows.Forms.Button Font_button;
         private System.Windows.Forms.Button Link_button;
         private System.Windows.Forms.Button Image_button;
