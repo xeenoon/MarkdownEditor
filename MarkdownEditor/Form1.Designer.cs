@@ -34,11 +34,11 @@ namespace MarkdownEditor
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.backgroundPanel = new System.Windows.Forms.Panel();
+            this.Heading_button = new System.Windows.Forms.Button();
             this.Underline_button = new System.Windows.Forms.Button();
             this.Font_button = new System.Windows.Forms.Button();
             this.Link_button = new System.Windows.Forms.Button();
             this.Image_button = new System.Windows.Forms.Button();
-            this.Heading_button = new System.Windows.Forms.Button();
             this.Quote_button = new System.Windows.Forms.Button();
             this.Code_button = new System.Windows.Forms.Button();
             this.Italics_button = new System.Windows.Forms.Button();
@@ -74,7 +74,7 @@ namespace MarkdownEditor
             // backgroundPanel
             // 
             this.backgroundPanel.BackColor = System.Drawing.Color.LightGray;
-            this.backgroundPanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("backgroundPanel.BackgroundImage")));
+            this.backgroundPanel.BackgroundImage = global::MarkdownEditor.Properties.Resources.Background;
             this.backgroundPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.backgroundPanel.Controls.Add(this.Heading_button);
             this.backgroundPanel.Controls.Add(this.Underline_button);
@@ -91,8 +91,20 @@ namespace MarkdownEditor
             this.backgroundPanel.Size = new System.Drawing.Size(378, 48);
             this.backgroundPanel.TabIndex = 1;
             // 
+            // Heading_button
+            // 
+            this.Heading_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Heading;
+            this.Heading_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Heading_button.Location = new System.Drawing.Point(247, 9);
+            this.Heading_button.Name = "Heading_button";
+            this.Heading_button.Size = new System.Drawing.Size(50, 30);
+            this.Heading_button.TabIndex = 7;
+            this.Heading_button.TabStop = false;
+            this.Heading_button.Click += new System.EventHandler(this.FormattingClicked);
+            // 
             // Underline_button
             // 
+            this.Underline_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Underline;
             this.Underline_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Underline_button.Location = new System.Drawing.Point(107, 9);
             this.Underline_button.Name = "Underline_button";
@@ -103,6 +115,7 @@ namespace MarkdownEditor
             // 
             // Font_button
             // 
+            this.Font_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Font;
             this.Font_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Font_button.Location = new System.Drawing.Point(212, 9);
             this.Font_button.Name = "Font_button";
@@ -113,6 +126,7 @@ namespace MarkdownEditor
             // 
             // Link_button
             // 
+            this.Link_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Link;
             this.Link_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Link_button.Location = new System.Drawing.Point(342, 9);
             this.Link_button.Name = "Link_button";
@@ -123,6 +137,7 @@ namespace MarkdownEditor
             // 
             // Image_button
             // 
+            this.Image_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Image;
             this.Image_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Image_button.Location = new System.Drawing.Point(302, 9);
             this.Image_button.Name = "Image_button";
@@ -131,18 +146,9 @@ namespace MarkdownEditor
             this.Image_button.TabStop = false;
             this.Image_button.Click += new System.EventHandler(this.FormattingClicked);
             // 
-            // Heading_button
-            // 
-            this.Heading_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Heading_button.Location = new System.Drawing.Point(247, 9);
-            this.Heading_button.Name = "Heading_button";
-            this.Heading_button.Size = new System.Drawing.Size(50, 30);
-            this.Heading_button.TabIndex = 7;
-            this.Heading_button.TabStop = false;
-            this.Heading_button.Click += new System.EventHandler(this.FormattingClicked);
-            // 
             // Quote_button
             // 
+            this.Quote_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Quote;
             this.Quote_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Quote_button.Location = new System.Drawing.Point(177, 9);
             this.Quote_button.Name = "Quote_button";
@@ -153,6 +159,7 @@ namespace MarkdownEditor
             // 
             // Code_button
             // 
+            this.Code_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Code;
             this.Code_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Code_button.Location = new System.Drawing.Point(142, 9);
             this.Code_button.Name = "Code_button";
@@ -163,6 +170,7 @@ namespace MarkdownEditor
             // 
             // Italics_button
             // 
+            this.Italics_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Italics;
             this.Italics_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Italics_button.Location = new System.Drawing.Point(72, 9);
             this.Italics_button.Name = "Italics_button";
@@ -173,6 +181,7 @@ namespace MarkdownEditor
             // 
             // Bold_button
             // 
+            this.Bold_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Bold;
             this.Bold_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Bold_button.Location = new System.Drawing.Point(37, 9);
             this.Bold_button.Name = "Bold_button";
@@ -183,6 +192,7 @@ namespace MarkdownEditor
             // 
             // Strikethrough_button
             // 
+            this.Strikethrough_button.BackgroundImage = global::MarkdownEditor.Properties.Resources.Strikethrough;
             this.Strikethrough_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Strikethrough_button.Location = new System.Drawing.Point(2, 9);
             this.Strikethrough_button.Name = "Strikethrough_button";
@@ -250,4 +260,3 @@ namespace MarkdownEditor
         private System.Windows.Forms.Button Underline_button;
     }
 }
-
