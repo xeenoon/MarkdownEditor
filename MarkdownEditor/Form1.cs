@@ -265,8 +265,21 @@ namespace MarkdownEditor
             int add = 0;
             if (start == 0 || richTextBox1.Text[start-1] != '*' || (start >=2 && richTextBox1.Text[start-2] == '*')) //Cannot already be italics, but can be bold
             {
-                richTextBox1.Text = richTextBox1.Text.Insert(start, "*");
-                add = 1;
+                if (((GetStyles(start) & Style.Italics) == Style.Italics) && ((GetStyles(start + length) & Style.Italics) != Style.Italics)) //Is the start already in italics, and the end ISN'T?
+                {
+                    //Dont bother
+                    ++start;
+                    add--;
+                }
+                else if (((GetStyles(start) & Style.Italics) != Style.Italics) && ((GetStyles(start + length) & Style.Italics) == Style.Italics)) //Is the start NOT in italics, and the end is?
+                {
+                    add = 1;
+                }
+                else
+                {
+                    richTextBox1.Text = richTextBox1.Text.Insert(start, "*");
+                    add = 1;
+                }
             }
             else //It is already italics
             {
@@ -276,7 +289,14 @@ namespace MarkdownEditor
             int endidx = start + length + add;
             if (endidx == richTextBox1.Text.Length || richTextBox1.Text[endidx] != '*' || (endidx <= richTextBox1.Text.Length-2 && richTextBox1.Text[endidx+1] == '*')) //Cannot be italics, but can be bold
             {
-                richTextBox1.Text = richTextBox1.Text.Insert(endidx, "*");
+                if (((GetStyles(start) & Style.Italics) != Style.Italics) && ((GetStyles(start + length) & Style.Italics) == Style.Italics)) //Is the start NOT in italics, and the end is?
+                {
+                    richTextBox1.Text = richTextBox1.Text.Insert(start, "*");
+                }
+                else
+                {
+                    richTextBox1.Text = richTextBox1.Text.Insert(endidx, "*");
+                }
             }
             else
             {
@@ -299,6 +319,15 @@ namespace MarkdownEditor
                 richTextBox1.Text = replace;
                 richTextBox1.Select(start, length);
             }
+            var selectedtext = richTextBox1.Text.Substring(start, length);
+            selectedtext = selectedtext.Replace("**", "PLACEHOLDER_FOR_BOLD_TEXT_THINGY_LOTS_MORE_TEXT_THAT_THE_USER_WILL_HOPEFULLY_NEVER_TYPE");
+            selectedtext = selectedtext.Replace("*", "");
+            selectedtext = selectedtext.Replace("PLACEHOLDER_FOR_BOLD_TEXT_THINGY_LOTS_MORE_TEXT_THAT_THE_USER_WILL_HOPEFULLY_NEVER_TYPE", "**");
+            richTextBox1.Text = richTextBox1.Text.Substring(0,start) + selectedtext + richTextBox1.Text.Substring(start+length);
+            
+            length = selectedtext.Length;
+            richTextBox1.Select(start, length);
+
             richTextBox1.Focus();
         }
         private void StrikeClicked(object sender, EventArgs e)
@@ -748,7 +777,14 @@ namespace MarkdownEditor
             Style result = Style.None;
 
             string toconvert = richTextBox1.Text;
-            toconvert = toconvert.Insert(start, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
+            try
+            {
+                toconvert = toconvert.Insert(start, "<div id=\"startofselection\"></div>"); //Create a div that we can easily find with its ID
+            }
+            catch
+            {
+                return Style.None;
+            }
             //toconvert = toconvert.Insert(start + length + 36, "<div id=\"endofselection\"></div>"); //End the div
 
             CustomMarkdown customMarkdown = new CustomMarkdown(toconvert);
