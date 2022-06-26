@@ -24,3 +24,5 @@
 <button style="margin: 0 90; background:red; color=white;" title="Button of death">**Click me and you die**</button>
 
 https://google.com
+
+<div><p style="font-family:MS Gothic;font-size:26.25px;font-weight:bold;font-style:italic">HEH, snazzy font</p></div>

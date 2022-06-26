@@ -204,7 +204,10 @@
 
 &lt;button style="margin: 0 90; background:red; color=white;" title="Button of death"&gt;**Click me and you die**&lt;/button&gt;
 
-https://google.com</value>
+https://google.com
+
+&lt;div&gt;&lt;p style="font-family:MS Gothic;font-size:26.25px;font-weight:bold;font-style:italic"&gt;HEH, snazzy font&lt;/p&gt;&lt;/div&gt;
+</value>
   </data>
   <metadata name="fontDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

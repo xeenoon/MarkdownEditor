@@ -1243,7 +1243,7 @@ namespace MarkdownEditor
             {
                 string before = richTextBox1.Text.Substring(0,start);
                 int startidx = before.LastIndexOf("<div>");
-                int newstart = toplace.Length - startidx;
+                int newstart = richTextBox1.Text.LastIndexOf("<div>", start) + ((toplace.Length + richTextBox1.Text.LastIndexOf("<div>", start)) - startidx);
 
                 int endIndex = richTextBox1.Text.LastIndexOf("\">", start) + 2;
                 string usertext = richTextBox1.Text.Substring(endIndex, richTextBox1.Text.IndexOf("</p>", start)-endIndex);
