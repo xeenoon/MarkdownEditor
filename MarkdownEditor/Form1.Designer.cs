@@ -149,7 +149,7 @@ namespace MarkdownEditor
             this.Quote_button.Size = new System.Drawing.Size(30, 30);
             this.Quote_button.TabIndex = 6;
             this.Quote_button.TabStop = false;
-            this.Quote_button.Click += new System.EventHandler(this.FormattingClicked);
+            this.Quote_button.Click += new System.EventHandler(this.QuoteClicked);
             // 
             // Code_button
             // 

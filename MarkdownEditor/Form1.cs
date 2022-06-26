@@ -826,5 +826,159 @@ namespace MarkdownEditor
                 }
             }
         }
+        private void QuoteClicked(object sender, EventArgs e)
+        {
+            FormattingClicked(sender, e);
+            var start = richTextBox1.SelectionStart;
+            var length = richTextBox1.SelectionLength;
+
+            if (richTextBox1.Text.Substring(start, 2) == "> ") //Did the user select the quote thingy
+            {
+                start += 2; //de-select the quote thingy
+                length -= 2;
+            }
+            if (start >= 1 && richTextBox1.Text.Substring(start-1, 2) == "> ") //Did the user select the quote thingy
+            {
+                start += 1; //de-select the quote thingy
+                length -= 1;
+            }
+
+            if (((GetStyles(start) & Style.Quote) == Style.Quote) && ((GetStyles(start + length) & Style.Quote) == Style.Quote)) //All inside a quote?
+            {
+                bool selectedstart = false;
+                if (start >= 2 && richTextBox1.Text.Substring(start -2, 2) == "> ") //Just before us is a quote thingy?
+                {
+                    richTextBox1.Text = richTextBox1.Text.Substring(0, start - 2) + richTextBox1.Text.Substring(start);
+                    start-=2;
+                    selectedstart = true;
+                }
+
+                string textselected = richTextBox1.Text.Substring(start, length);
+                textselected = textselected.Replace("> ", "");
+
+                if (start + length == richTextBox1.Text.Length)
+                {
+                    textselected = textselected + "\n";
+                }
+                else if (richTextBox1.Text[start + length] != '\n')
+                {
+                    textselected = textselected + "\n> ";
+                }
+
+                if (!selectedstart)
+                {
+                    textselected = "\n" + textselected;
+                }
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+                if (!selectedstart)
+                {
+                    ++start;
+                }
+            }
+            else if (((GetStyles(start) & Style.Quote) == Style.Quote) && !((GetStyles(start + length) & Style.Quote) == Style.Quote)) //First inside, but not second
+            {
+                //Make everything underlined
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var openingMatches = Regex.Matches(textselected, "<u>").Cast<Match>().ToList();
+                var closingMatches = Regex.Matches(textselected, "</u>").Cast<Match>().ToList();
+                textselected = textselected.Replace("<u>", "");
+                textselected = textselected.Replace("</u>", ""); //Remove all the underline stuff inside the selection
+                textselected += "</u>"; //Add a closing tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in openingMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 3;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 3;
+                    }
+                }
+                foreach (Match match in closingMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 4;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 4;
+                    }
+                } //Modify cursor pos
+                start += 4;
+                length -= 4;
+            }
+            else if (!((GetStyles(start) & Style.Quote) == Style.Quote) && ((GetStyles(start + length) & Style.Quote) == Style.Quote)) //First outside, second inside
+            {
+                //Make everything underlined
+                string textselected = richTextBox1.Text.Substring(start, length);
+                var openingMatches = Regex.Matches(textselected, "<u>").Cast<Match>().ToList();
+                var closingMatches = Regex.Matches(textselected, "</u>").Cast<Match>().ToList();
+                textselected = textselected.Replace("<u>", "");
+                textselected = textselected.Replace("</u>", ""); //Remove all the underline stuff inside the selection
+                textselected = "<u>" + textselected; //Add a closing tag
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+
+                foreach (Match match in openingMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 3;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 3;
+                    }
+                }
+                foreach (Match match in closingMatches)
+                {
+                    if (match.Index < start)
+                    {
+                        start -= 4;
+                    }
+                    else if (match.Index >= start && match.Index < start + length)
+                    {
+                        length -= 4;
+                    }
+                } //Modify cursor pos
+                start += 3;
+            }
+            else //Neither are inside 
+            {
+                string textselected = richTextBox1.Text.Substring(start, length); //Make everything part of the quote
+
+                bool addedline = false;
+                start -= Regex.Matches(textselected, "\n> ").Count*2;
+                textselected = textselected.Replace("\n> ", "\n");
+                start += Regex.Matches(textselected, "\n").Count*2;
+                textselected = textselected.Replace("\n", "\n> ");
+                if (start == 0 || richTextBox1.Text[start - 1] == '\n') //At start of document or on a new line?
+                {
+                    textselected = "> " + textselected;
+                }
+                else
+                {
+                    textselected = "\n> " + textselected;
+                    addedline = true;
+                }
+
+                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+                if (addedline)
+                {
+                    start += 3;
+                }
+                else
+                {
+                    start += 2;
+                }
+            }
+            richTextBox1.Select(start, length);
+            richTextBox1.Focus();
+        }
     }
 }
