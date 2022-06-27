@@ -1057,6 +1057,12 @@ namespace MarkdownEditor
                         ItalicsClicked(Italics_button, null);
                         e.SuppressKeyPress = true;
                         break;
+                    case Keys.Z:
+                        Undo();
+                        break;
+                    case Keys.Y:
+                        Redo();
+                        break;
 
                 }
                 if (e.Shift)
@@ -1074,6 +1080,16 @@ namespace MarkdownEditor
                             break;
                     }
                 }
+            }
+            else if (!e.Alt)
+            {
+               if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(richTextBox1.Text, richTextBox1.SelectionStart, richTextBox1.SelectionLength));
+                ++ctrlZ_idx;
             }
         }
 
@@ -1328,5 +1344,50 @@ namespace MarkdownEditor
             H3_button.Visible = false;
             HeadingBackpanel.Visible = false;
         }
+
+        #region ControlZHandling
+        public class TextboxData
+        {
+            public string Text;
+            public int SelectionStart;
+            public int SelectionLength;
+
+            public TextboxData(string text, int selectionStart, int selectionLength)
+            {
+                Text = text;
+                SelectionStart = selectionStart;
+                SelectionLength = selectionLength;
+            }
+        }
+        public List<TextboxData> ctrlZ_data = new List<TextboxData>();
+        int ctrlZ_idx = 0;
+
+        public void Undo()
+        {
+            if (ctrlZ_idx == 0)
+            {
+                return;
+            }
+            ctrlZ_data.Add(new TextboxData(richTextBox1.Text, richTextBox1.SelectionStart, richTextBox1.SelectionLength));
+            ctrlZ_idx--;
+            var item = ctrlZ_data[ctrlZ_idx];
+            richTextBox1.Text = item.Text;
+            richTextBox1.Select(item.SelectionStart, item.SelectionLength);
+            richTextBox1.Focus();
+        }
+        public void Redo()
+        {
+            if (ctrlZ_idx >= ctrlZ_data.Count()-1)
+            {
+                return;
+            }
+
+            ctrlZ_idx++;
+            var item = ctrlZ_data[ctrlZ_idx];
+            richTextBox1.Text = item.Text;
+            richTextBox1.Select(item.SelectionStart, item.SelectionLength);
+            richTextBox1.Focus();
+        }
+        #endregion
     }
 }
