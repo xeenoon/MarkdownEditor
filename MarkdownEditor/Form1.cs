@@ -189,6 +189,10 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
+            int origin_start = start;
+            int origin_length = length;
+            string origin_text = richTextBox1.Text;
+
             start = MoveOutsideTag(richTextBox1.Text, start);
             length = MoveOutsideTag(richTextBox1.Text, start + length) - start;
 
@@ -285,6 +289,17 @@ namespace MarkdownEditor
 
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
+
+            if (origin_text != richTextBox1.Text) //Text changed?
+            {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
+                ++ctrlZ_idx;
+            }
         }
 
         private void ItalicsClicked(object sender, EventArgs e)
@@ -297,6 +312,10 @@ namespace MarkdownEditor
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
+
+            int origin_start = start;
+            int origin_length = length;
+            string origin_text = richTextBox1.Text;
 
             if (length == 0)
             {
@@ -382,6 +401,17 @@ namespace MarkdownEditor
             richTextBox1.Select(start, length);
 
             richTextBox1.Focus();
+
+            if (origin_text != richTextBox1.Text) //Text changed?
+            {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
+                ++ctrlZ_idx;
+            }
         }
         private void StrikeClicked(object sender, EventArgs e)
         {
@@ -393,6 +423,10 @@ namespace MarkdownEditor
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
+
+            int origin_start = start;
+            int origin_length = length;
+            string origin_text = richTextBox1.Text;
 
             start = MoveOutsideTag(richTextBox1.Text, start);
             length = MoveOutsideTag(richTextBox1.Text, start + length) - start;
@@ -490,6 +524,17 @@ namespace MarkdownEditor
 
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
+
+            if (origin_text != richTextBox1.Text) //Text changed?
+            {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
+                ++ctrlZ_idx;
+            }
         }
         private void CodeClicked(object sender, EventArgs e)
         {
@@ -501,6 +546,10 @@ namespace MarkdownEditor
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
+
+            int origin_start = start;
+            int origin_length = length;
+            string origin_text = richTextBox1.Text;
 
             start = MoveOutsideTag(richTextBox1.Text, start);
             length = MoveOutsideTag(richTextBox1.Text, start + length) - start;
@@ -598,6 +647,17 @@ namespace MarkdownEditor
 
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
+
+            if (origin_text != richTextBox1.Text) //Text changed?
+            {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
+                ++ctrlZ_idx;
+            }
         }
         private void UnderlineClicked(object sender, EventArgs e)
         {
@@ -608,6 +668,11 @@ namespace MarkdownEditor
             FormattingClicked(sender, e);
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
+
+            int origin_start = start;
+            int origin_length = length;
+            string origin_text = richTextBox1.Text;
+
             start = MoveOutsideTag(richTextBox1.Text, start);
             length = MoveOutsideTag(richTextBox1.Text, start+length)-start;
             if (length == 0)
@@ -741,6 +806,17 @@ namespace MarkdownEditor
             richTextBox1.Select(start, length);
             RemoveUnusedTags();
             richTextBox1.Focus();
+
+            if (origin_text != richTextBox1.Text) //Text changed?
+            {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
+                ++ctrlZ_idx;
+            }
         }
         public List<TagLocation> UnusedTags(string md)
         {
@@ -1115,8 +1191,17 @@ namespace MarkdownEditor
             }
             if (richTextBox1.Text.Length == 0)//Empty?
             {
+
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(richTextBox1.Text, richTextBox1.SelectionStart, richTextBox1.SelectionLength));
+                ++ctrlZ_idx;
+
                 richTextBox1.Text = toadd + "Heading";
-                richTextBox1.Select(toadd.Length,7);
+                richTextBox1.Select(toadd.Length, 7);
                 richTextBox1.Focus();
                 return;
             }
@@ -1124,10 +1209,22 @@ namespace MarkdownEditor
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength - (MoveToEndOfHeading(richTextBox1.Text, start) - start);
 
+            int origin_start = start;
+            int origin_length = length;
+            string origin_text = richTextBox1.Text;
+
             start = MoveToEndOfHeading(richTextBox1.Text, start);
 
             if (length <= 0)
             {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(richTextBox1.Text, richTextBox1.SelectionStart, richTextBox1.SelectionLength));
+                ++ctrlZ_idx;
+
                 richTextBox1.Text = richTextBox1.Text.Insert(start, toadd);
                 return;
             }
@@ -1137,6 +1234,14 @@ namespace MarkdownEditor
             }
             if (richTextBox1.Text.Substring(start, length).Count(s => s == '\n') >= 1)
             {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(richTextBox1.Text, richTextBox1.SelectionStart, richTextBox1.SelectionLength));
+                ++ctrlZ_idx;
+
                 return;
             }
 
@@ -1156,6 +1261,17 @@ namespace MarkdownEditor
                 {
                     richTextBox1.Text = richTextBox1.Text.Insert(start, toadd);
                 }
+            }
+
+            if (origin_text != richTextBox1.Text) //Text changed?
+            {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
+                ++ctrlZ_idx;
             }
         }
 
@@ -1212,15 +1328,32 @@ namespace MarkdownEditor
 
         private void Image_button_Click(object sender, EventArgs e)
         {
+            if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+            {
+                ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                ctrlZ_idx = ctrlZ_data.Count();
+            }
+            ctrlZ_data.Add(new TextboxData(richTextBox1.Text, richTextBox1.SelectionStart, richTextBox1.SelectionLength));
+            ++ctrlZ_idx;
+
+
             var start = richTextBox1.SelectionStart;
             richTextBox1.Text = richTextBox1.Text.Insert(start, "\n![caption](address)\n");
-            start+=12;
+            start += 12;
             richTextBox1.Select(start, 7);
             richTextBox1.Focus();
         }
 
         private void Link_button_Click(object sender, EventArgs e)
         {
+            if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+            {
+                ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                ctrlZ_idx = ctrlZ_data.Count();
+            }
+            ctrlZ_data.Add(new TextboxData(richTextBox1.Text, richTextBox1.SelectionStart, richTextBox1.SelectionLength));
+            ++ctrlZ_idx;
+
             var start = richTextBox1.SelectionStart;
             richTextBox1.Text = richTextBox1.Text.Insert(start, "\n[text](link)\n");
             start += 8;
@@ -1251,6 +1384,10 @@ namespace MarkdownEditor
 
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
+
+            int origin_start = start;
+            int origin_length = length;
+            string origin_text = richTextBox1.Text;
 
             var selectedfont = CustomFont();
             int toshift = toplace.Length;
@@ -1317,6 +1454,17 @@ namespace MarkdownEditor
             }
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
+
+            if (origin_text != richTextBox1.Text) //Text changed?
+            {
+                if (ctrlZ_idx != ctrlZ_data.Count()) //Inserting item?
+                {
+                    ctrlZ_data.RemoveRange(ctrlZ_idx, ctrlZ_data.Count() - ctrlZ_idx);
+                    ctrlZ_idx = ctrlZ_data.Count();
+                }
+                ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
+                ++ctrlZ_idx;
+            }
         }
         public HtmlAgilityPack.HtmlNode CustomFont()
         {
