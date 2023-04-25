@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -15,7 +17,7 @@ namespace MarkdownEditor
         public Form1()
         {
             InitializeComponent();
-            var md = Properties.Resources.DefaultText;
+            var md = Form2.filecontents;
             richTextBox1.Text = md;
             richTextBox1.AutoWordSelection = true;
             CustomMarkdown customMarkdown = new CustomMarkdown(md);
@@ -1139,6 +1141,9 @@ namespace MarkdownEditor
                     case Keys.Y:
                         Redo();
                         break;
+                    case Keys.S:
+                        Save();
+                        break;
 
                 }
                 if (e.Shift)
@@ -1167,6 +1172,12 @@ namespace MarkdownEditor
                 ctrlZ_data.Add(new TextboxData(richTextBox1.Text, richTextBox1.SelectionStart, richTextBox1.SelectionLength));
                 ++ctrlZ_idx;
             }
+        }
+
+        private void Save()
+        {
+            File.WriteAllBytes(Form2.filepath, Encryption.Encrypt(richTextBox1.Text, Form2.key));
+            MessageBox.Show("File Saved");
         }
 
         private void HeadingClicked(object sender, EventArgs e)
