@@ -290,6 +290,7 @@ namespace MarkdownEditor
                 totalremoved += 4;
             }
 
+            richTextBox1.Text = finaltext;
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
 
@@ -303,7 +304,6 @@ namespace MarkdownEditor
                 ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
                 ++ctrlZ_idx;
             }
-            richTextBox1.Text = finaltext;
         }
 
         private void ItalicsClicked(object sender, EventArgs e)
@@ -403,6 +403,7 @@ namespace MarkdownEditor
             finaltext = finaltext.Substring(0,start) + selectedtext + finaltext.Substring(start+length);
             
             length = selectedtext.Length;
+            richTextBox1.Text = finaltext;
             richTextBox1.Select(start, length);
 
             richTextBox1.Focus();
@@ -417,7 +418,6 @@ namespace MarkdownEditor
                 ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
                 ++ctrlZ_idx;
             }
-            richTextBox1.Text = finaltext;
         }
         private void StrikeClicked(object sender, EventArgs e)
         {
@@ -528,6 +528,7 @@ namespace MarkdownEditor
                 finaltext = finaltext.Substring(0, match.Index - totalremoved) + finaltext.Substring(match.Index + 4 - totalremoved);
                 totalremoved += 4;
             }
+            richTextBox1.Text = finaltext;
 
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
@@ -543,7 +544,6 @@ namespace MarkdownEditor
                 ++ctrlZ_idx;
             }
 
-            richTextBox1.Text = finaltext;
         }
         private void CodeClicked(object sender, EventArgs e)
         {
@@ -654,6 +654,7 @@ namespace MarkdownEditor
                 finaltext = finaltext.Substring(0, match.Index - totalremoved) + finaltext.Substring(match.Index + 6 - totalremoved);
                 totalremoved += 6;
             }
+            richTextBox1.Text = finaltext;
 
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
@@ -669,7 +670,6 @@ namespace MarkdownEditor
                 ++ctrlZ_idx;
             }
 
-            richTextBox1.Text = finaltext;
         }
         private void UnderlineClicked(object sender, EventArgs e)
         {
@@ -815,6 +815,7 @@ namespace MarkdownEditor
                 finaltext = finaltext.Substring(0,match.Index-totalremoved) + finaltext.Substring(match.Index + match.length-totalremoved);
                 totalremoved += match.length;
             }
+            richTextBox1.Text = finaltext;
 
             richTextBox1.Select(start, length);
             RemoveUnusedTags();
@@ -831,7 +832,6 @@ namespace MarkdownEditor
                 ++ctrlZ_idx;
             }
 
-            richTextBox1.Text = finaltext;
         }
         public List<TagLocation> UnusedTags(string md)
         {
@@ -1009,15 +1009,16 @@ namespace MarkdownEditor
         private void QuoteClicked(object sender, EventArgs e)
         {
             FormattingClicked(sender, e);
+            string finaltext = richTextBox1.Text;
             var start = richTextBox1.SelectionStart;
             var length = richTextBox1.SelectionLength;
 
-            if (richTextBox1.Text.Length >= start + 2 && richTextBox1.Text.Substring(start, 2) == "> ") //Did the user select the quote thingy
+            if (finaltext.Length >= start + 2 && finaltext.Substring(start, 2) == "> ") //Did the user select the quote thingy
             {
                 start += 2; //de-select the quote thingy
                 length -= 2;
             }
-            if (richTextBox1.Text.Length >= start + 3 && start >= 1 && richTextBox1.Text.Substring(start-1, 2) == "> ") //Did the user select the quote thingy
+            if (finaltext.Length >= start + 3 && start >= 1 && finaltext.Substring(start-1, 2) == "> ") //Did the user select the quote thingy
             {
                 start += 1; //de-select the quote thingy
                 length -= 1;
@@ -1026,21 +1027,21 @@ namespace MarkdownEditor
             if (((GetStyles(start) & Style.Quote) == Style.Quote) && ((GetStyles(start + length) & Style.Quote) == Style.Quote)) //All inside a quote?
             {
                 bool selectedstart = false;
-                if (start >= 2 && richTextBox1.Text.Substring(start -2, 2) == "> ") //Just before us is a quote thingy?
+                if (start >= 2 && finaltext.Substring(start -2, 2) == "> ") //Just before us is a quote thingy?
                 {
-                    richTextBox1.Text = richTextBox1.Text.Substring(0, start - 2) + richTextBox1.Text.Substring(start);
+                    finaltext = finaltext.Substring(0, start - 2) + finaltext.Substring(start);
                     start-=2;
                     selectedstart = true;
                 }
 
-                string textselected = richTextBox1.Text.Substring(start, length);
+                string textselected = finaltext.Substring(start, length);
                 textselected = textselected.Replace("> ", "");
 
-                if (start + length == richTextBox1.Text.Length)
+                if (start + length == finaltext.Length)
                 {
                     textselected = textselected + "\n";
                 }
-                else if (richTextBox1.Text[start + length] != '\n')
+                else if (finaltext[start + length] != '\n')
                 {
                     textselected = textselected + "\n> ";
                 }
@@ -1049,7 +1050,7 @@ namespace MarkdownEditor
                 {
                     textselected = "\n" + textselected;
                 }
-                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+                finaltext = finaltext.Substring(0, start) + textselected + finaltext.Substring(start + length);
                 if (!selectedstart)
                 {
                     ++start;
@@ -1057,14 +1058,14 @@ namespace MarkdownEditor
             }
             else if (!((GetStyles(start) & Style.Quote) == Style.Quote) && !((GetStyles(start + length) & Style.Quote) == Style.Quote))//Neither are inside 
             {
-                string textselected = richTextBox1.Text.Substring(start, length); //Make everything part of the quote
+                string textselected = finaltext.Substring(start, length); //Make everything part of the quote
 
                 bool addedline = false;
                 start -= Regex.Matches(textselected, "\n> ").Count*2;
                 textselected = textselected.Replace("\n> ", "\n");
                 start += Regex.Matches(textselected, "\n").Count*2;
                 textselected = textselected.Replace("\n", "\n> ");
-                if (start == 0 || richTextBox1.Text[start - 1] == '\n') //At start of document or on a new line?
+                if (start == 0 || finaltext[start - 1] == '\n') //At start of document or on a new line?
                 {
                     textselected = "> " + textselected;
                 }
@@ -1074,7 +1075,7 @@ namespace MarkdownEditor
                     addedline = true;
                 }
 
-                richTextBox1.Text = richTextBox1.Text.Substring(0, start) + textselected + richTextBox1.Text.Substring(start + length);
+                finaltext = finaltext.Substring(0, start) + textselected + finaltext.Substring(start + length);
                 if (addedline)
                 {
                     start += 3;
@@ -1084,6 +1085,7 @@ namespace MarkdownEditor
                     start += 2;
                 }
             }
+            richTextBox1.Text = finaltext;
             richTextBox1.Select(start, length);
             richTextBox1.Focus();
         }
