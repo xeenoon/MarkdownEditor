@@ -38,6 +38,11 @@ namespace MarkdownEditor
             {
                 button.Invalidate();
             }
+
+            if (Form2.creating)
+            {
+                Save(false);
+            }
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -831,7 +836,6 @@ namespace MarkdownEditor
                 ctrlZ_data.Add(new TextboxData(origin_text, origin_start, origin_length));
                 ++ctrlZ_idx;
             }
-
         }
         public List<TagLocation> UnusedTags(string md)
         {
@@ -1192,10 +1196,13 @@ namespace MarkdownEditor
             }
         }
 
-        private void Save()
+        private void Save(bool showbox = true)
         {
             File.WriteAllBytes(Form2.filepath, Encryption.Encrypt(richTextBox1.Text, Form2.key));
-            MessageBox.Show("File Saved");
+            if (showbox) 
+            {
+                MessageBox.Show("File Saved");
+            }
         }
 
         private void HeadingClicked(object sender, EventArgs e)
