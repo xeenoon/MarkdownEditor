@@ -14,6 +14,7 @@ namespace MarkdownEditor
     public partial class Form1 : Form
     {
         List<Button> formattingButtons = new List<Button>();
+        System.Timers.Timer autosavetimer = new System.Timers.Timer(60000);
         public Form1()
         {
             InitializeComponent();
@@ -43,14 +44,27 @@ namespace MarkdownEditor
             {
                 Save(false);
             }
+
+            autosavetimer.Interval = 60000;
+            autosavetimer.Elapsed += new System.Timers.ElapsedEventHandler(Autosave);
+            autosavetimer.AutoReset = true;
+            autosavetimer.Start();
+        }
+
+        private void Autosave(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                this.Invoke((MethodInvoker)delegate { Save(false); label1.Text = "Saved at " + DateTime.Now.ToShortTimeString(); });
+            }
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            var md = richTextBox1.Text;
-            CustomMarkdown customMarkdown = new CustomMarkdown(md);
-            string v = customMarkdown.GetHtml();
-            webBrowser1.DocumentText = v;
+            //var md = richTextBox1.Text;
+            //CustomMarkdown customMarkdown = new CustomMarkdown(md);
+            //string v = customMarkdown.GetHtml();
+            //webBrowser1.DocumentText = v;
         }
 
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
@@ -1573,5 +1587,23 @@ namespace MarkdownEditor
             richTextBox1.Focus();
         }
         #endregion
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var md = richTextBox1.Text;
+            CustomMarkdown customMarkdown = new CustomMarkdown(md);
+            string v = customMarkdown.GetHtml();
+            webBrowser1.DocumentText = v;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
